@@ -211,7 +211,7 @@ const Game = () => {
                     ctx.drawImage(tileImg, (TILE_SIZE) * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
                 } else {
                     const tile = tileCoords[map[y][x]]
-                    ctx.drawImage(img, tile.x, tile.y, TILE_SIZE, TILE_SIZE, (TILE_SIZE - 2) * x, TILE_SIZE * y, tile.w + 1, tile.h + 1);
+                    ctx.drawImage(img, tile.x, tile.y, TILE_SIZE/4, TILE_SIZE/4, (TILE_SIZE) * x, TILE_SIZE * y, tile.w + 10, tile.h + 1);
 
 
                     if (map[y][x] === 'ground' && map[y][x - 1] && map[y][x - 1] === 'grass') {
