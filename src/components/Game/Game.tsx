@@ -298,11 +298,9 @@ const Game = () => {
         ctx.restore()
 
 
-        const frame = Math.round(new Date().getTime()/700) % 2
+        const frame = getKey('ArrowDown')? Math.round(new Date().getTime()/150) % 4 : Math.round(new Date().getTime()/500) % 2
 
-
-
-        ctx.drawImage(guyImg, 61*frame, 0 ,60, 100, -70,-185, 60*2, 100*2,);
+        ctx.drawImage(guyImg, (getKey('ArrowDown') ? 60 : 0) + 60*frame, 0 ,60, 100, -70,-185, 60*2, 100*2,);
 
 
         ctx.translate(-10, 0)
@@ -385,7 +383,7 @@ const Game = () => {
 
     return <div className="Game">
 
-    <audio src="/audio/music_jeu.mp3" loop={true} autoPlay={true} />
+    {/* <audio src="/audio/music_jeu.mp3" loop={true} autoPlay={true} /> */}
 
         <div className="hours" ref={hourRef}>01h00</div>
 
