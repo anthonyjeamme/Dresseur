@@ -3,12 +3,7 @@ import { useKeys } from '../../hooks/useKeys'
 
 import './Game.scss'
 
-
-const img = document.createElement('img')
-img.src = "/images/ground.png"
-
-const tileImg = document.createElement('img')
-tileImg.src = "/images/tile.png"
+export const isBrowser = () => typeof window !== 'undefined'
 
 const lights = [
 
@@ -76,6 +71,21 @@ const Game = () => {
 
     const { getKey } = useKeys()
 
+    let img = null, tileImg = null, houseImg = null, guyImg = null
+        
+    if(isBrowser()){
+
+        img = document.createElement('img')
+        img.src = "/images/ground.png"
+        tileImg = document.createElement('img')
+        tileImg.src = "/images/tile.png"
+        houseImg = document.createElement('img')
+        houseImg.src = "/images/house.png"
+        guyImg = document.createElement('img')
+        guyImg.src = "/images/guy.png"
+    }
+
+
     const timeLoop = () => {
         timeRef.current.h = (timeRef.current.h + 1) % 24
 
@@ -112,14 +122,11 @@ const Game = () => {
         if (!getKey('ArrowUp') && !getKey('ArrowDown')) {
             if (vitesseRef.current.y > -0.4 && vitesseRef.current.y < 0.4) vitesseRef.current.y = 0
             else if (vitesseRef.current.y > 0) {
-                vitesseRef.current.y -= 0.4
+                vitesseRef.current.y -= 0.6
             } else if (vitesseRef.current.y < 0) {
-                vitesseRef.current.y += 0.4
+                vitesseRef.current.y += 0.6
             }
         }
-
-
-
 
         if (getKey('ArrowLeft')) {
             vitesseRef.current.x = Math.max(vitesseRef.current.x - 0.4, -MAX_SPEED)
@@ -196,10 +203,7 @@ const Game = () => {
 
         const TILE_SIZE = 64
 
-
         ctx.translate(-positionRef.current.x, -positionRef.current.y)
-
-
 
         for (let y = 0; y < map.length; y++) {
             for (let x = 0; x < map[0].length; x++) {
@@ -229,6 +233,8 @@ const Game = () => {
                 }
             }
         }
+
+        ctx.drawImage(houseImg, 200,200, 227*4, 183*4);
 
 
         // ctx.globalCompositeOperation = "lighter";
@@ -292,10 +298,28 @@ const Game = () => {
         ctx.restore()
 
 
+        const frame = Math.round(new Date().getTime()/700) % 2
 
 
-        ctx.fillStyle = "red"
-        ctx.fillRect(-20, -10, 20, 20)
+
+        ctx.drawImage(guyImg, 61*frame, 0 ,60, 100, -70,-185, 60*2, 100*2,);
+
+
+        ctx.translate(-10, 0)
+        ctx.scale(1, 0.5)
+        
+        var gradient = ctx.createRadialGradient(0, 0, 10, 0, 0, 70);
+        // Add three color stops
+        gradient.addColorStop(0, 'rgba(0,0,0,0.4)');
+        gradient.addColorStop(1, 'transparent');
+
+        // Set the fill style and draw a rectangle
+        ctx.fillStyle = gradient;
+        ctx.fillRect(-100, -100, 200, 200);
+
+        
+        ctx.scale(1,2)
+        ctx.translate(10, 0)
 
 
         ctx.translate(-window.innerWidth / 2, -window.innerHeight / 2)
@@ -352,11 +376,20 @@ const Game = () => {
 
     }
 
+    useEffect(()=>{
+
+        canvasRef.current.height = window.innerHeight
+        canvasRef.current.width = window.innerWidth
+
+    },[])
+
     return <div className="Game">
+
+    <audio src="/audio/music_jeu.mp3" loop={true} autoPlay={true} />
 
         <div className="hours" ref={hourRef}>01h00</div>
 
-        <canvas ref={canvasRef} height={window.innerHeight} width={window.innerWidth} onContextMenu={e => { e.preventDefault() }} />
+        <canvas ref={canvasRef} onContextMenu={e => { e.preventDefault() }} />
 
     </div>
 }
