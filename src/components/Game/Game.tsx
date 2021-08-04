@@ -8,10 +8,22 @@ export const isBrowser = () => typeof window !== 'undefined'
 const lights = [
 
     {
-        position: { x: 200, y: 200 },
+        position: { x: 650, y: 670 },
         color: [255, 255, 100],
-        intensity: 0.15,
-        radius: 200, innerRadius: 100
+        intensity: 0.5,
+        radius: 70, innerRadius: 10
+    },
+    {
+        position: { x: 350, y: 810 },
+        color: [255, 255, 100],
+        intensity: 0.5,
+        radius: 70, innerRadius: 10
+    },
+    {
+        position: { x: 955, y: 810 },
+        color: [255, 255, 100],
+        intensity: 0.5,
+        radius: 70, innerRadius: 10
     },
     {
         position: { x: 200, y: 200 },
@@ -289,7 +301,7 @@ const Game = () => {
             gradient.addColorStop(0, `rgba(${light.color.join(',')},${light.intensity + (Math.random() / 30 - 1 / 30)})`);
             gradient.addColorStop(1, `rgba(${light.color.join(',')},${0})`);
             ctx.fillStyle = gradient;
-            ctx.fillRect(light.position.x - radius, light.position.y - radius, radius * 2, radius * 2);
+            ctx.fillRect(light.position.x - radius - 50, light.position.y - radius- 50, radius * 2 + 100, radius * 2+100);
 
 
         }
