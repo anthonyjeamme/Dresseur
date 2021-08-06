@@ -1,10 +1,15 @@
+import { isBrowser } from "../../../components/Game/Game"
+
 export class Tile {
-  image = document.createElement("img")
+  image = null
   imageSrc = null
   json = null
   isLoaded = false
 
   constructor(imageSrc, json) {
+    if (!isBrowser()) return
+
+    this.image = document.createElement("img")
     this.imageSrc = imageSrc
     this.json = json
   }

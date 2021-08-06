@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react"
+import { render } from "../../gameEngine/graphicEngine/graphicEngine"
+import { Scene } from "../../gameEngine/Objects/Scene/Scene"
 import { Tile } from "../../gameEngine/Objects/Tile/Tile"
 import { TPosition } from "../../gameEngine/Types/Math/Position"
-import { useKeys } from "../../hooks/useKeys"
 import { useKeyboardAction } from "../../io/useKeyboardAction"
 
 import "./Game.scss"
@@ -1069,7 +1070,7 @@ const Game = () => {
 
   const keyboard = useKeyboardAction()
 
-  const positionRef = useRef({ x: 64, y: 64 })
+  const positionRef = useRef({ x: 96 + 32, y: 64 })
   const vitesseRef = useRef({ x: 0, y: 0 })
 
   const currentZoom = useRef(ZOOM)
@@ -1081,7 +1082,7 @@ const Game = () => {
 
   const tilesRef = useRef([])
 
-  const { getKey } = useKeys()
+  const sceneRef = useRef(new Scene())
 
   let img = null,
     tileImg = null,
@@ -1121,6 +1122,9 @@ const Game = () => {
       },
       grassWaterleft: {
         coords: [0, 32, 32, 32],
+      },
+      ground: {
+        coords: [32, 0, 32, 32],
       },
     })
 
@@ -1260,6 +1264,8 @@ const Game = () => {
 
     // ctx.translate(window.innerWidth, window.innerHeight)
 
+    render(sceneRef.current, ctx, positionRef.current)
+
     ctx.translate(
       window.innerWidth / currentZoom.current / 2,
       window.innerHeight / currentZoom.current / 2
@@ -1269,54 +1275,53 @@ const Game = () => {
 
     ctx.translate(-positionRef.current.x, -positionRef.current.y)
 
-    if (tilesRef.current.length > 0) {
-      for (let y = 0; y < 20; y++) {
-        for (let x = 0; x < 20; x++) {
-          if (x === 0) {
-            drawTile(
-              tilesRef.current[0],
-              {
-                x: x * 32,
-                y: y * 32,
-              },
-              "water"
-            )
-          } else if (x === 1) {
-            drawTile(
-              tilesRef.current[0],
-              {
-                x: x * 32,
-                y: y * 32,
-              },
-              "grassWaterleft"
-            )
-          } else {
-            drawTile(
-              tilesRef.current[0],
-              {
-                x: x * 32,
-                y: y * 32,
-              },
-              "grass"
-            )
-          }
-        }
-      }
-    }
+    // if (tilesRef.current.length > 0) {
+    //   for (let y = 0; y < 50; y++) {
+    //     for (let x = 0; x < 50; x++) {
+    //       if (x === 0) {
+    //         drawTile(
+    //           tilesRef.current[0],
+    //           {
+    //             x: x * 32,
+    //             y: y * 32,
+    //           },
+    //           "water"
+    //         )
+    //       } else if (x === 1) {
+    //         drawTile(
+    //           tilesRef.current[0],
+    //           {
+    //             x: x * 32,
+    //             y: y * 32,
+    //           },
+    //           "grassWaterleft"
+    //         )
+    //       } else {
+    //         if (y === 5) {
+    //           drawTile(
+    //             tilesRef.current[0],
+    //             {
+    //               x: x * 32,
+    //               y: y * 32,
+    //             },
+    //             "ground"
+    //           )
+    //         } else
+    //           drawTile(
+    //             tilesRef.current[0],
+    //             {
+    //               x: x * 32,
+    //               y: y * 32,
+    //             },
+    //             "grass"
+    //           )
+    //       }
+    //     }
+    //   }
+    // }
 
     for (let i = 0; i < 10; i++) {
-      ctx.drawImage(barrImg, i * 32, 0)
-
-      ctx.globalAlpha = 0.2
-
-      ctx.translate(i * 32, 16)
-      ctx.scale(1, 0.5)
-
-      ctx.drawImage(barrImg, 0, 0)
-
-      ctx.scale(1, 2)
-      ctx.translate(-i * 32, -16)
-      ctx.globalAlpha = 1
+      ctx.drawImage(barrImg, 64 + i * 32, 0)
     }
 
     // ctx.globalCompositeOperation = "lighter";

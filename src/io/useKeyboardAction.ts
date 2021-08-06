@@ -45,10 +45,6 @@ export const useKeyboardAction = () => {
 
   const gamepadRef = useRef<number>(null)
 
-  const handleGamePadDown = e => {
-    console.log(e)
-  }
-
   useEffect(() => {
     window.addEventListener("gamepadconnected", function (e) {
       console.log(
@@ -97,8 +93,6 @@ export const useKeyboardAction = () => {
         if (xaxis < -0.2 && action === "ACTION_GO_LEFT") return true
         if (yaxis > 0.2 && action === "ACTION_GO_DOWN") return true
         if (yaxis < -0.2 && action === "ACTION_GO_UP") return true
-
-        // console.log(gamepadRef.current)
       }
 
       return false
