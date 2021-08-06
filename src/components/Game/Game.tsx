@@ -1088,7 +1088,8 @@ const Game = () => {
     houseImg = null,
     guyImg = null,
     testImg = null,
-    joeImg = null
+    joeImg = null,
+    barrImg = null
 
   if (isBrowser()) {
     img = document.createElement("img")
@@ -1105,12 +1106,21 @@ const Game = () => {
 
     joeImg = document.createElement("img")
     joeImg.src = "/images/joe.png"
+
+    barrImg = document.createElement("img")
+    barrImg.src = "/images/barr.png"
   }
 
   useEffect(() => {
     const tile = new Tile("/res/tiles/ground/ground.png", {
       grass: {
         coords: [0, 0, 32, 32],
+      },
+      water: {
+        coords: [32 * 4, 0, 32, 32],
+      },
+      grassWaterleft: {
+        coords: [0, 32, 32, 32],
       },
     })
 
@@ -1262,16 +1272,51 @@ const Game = () => {
     if (tilesRef.current.length > 0) {
       for (let y = 0; y < 20; y++) {
         for (let x = 0; x < 20; x++) {
-          drawTile(
-            tilesRef.current[0],
-            {
-              x: x * 32,
-              y: y * 32,
-            },
-            "grass"
-          )
+          if (x === 0) {
+            drawTile(
+              tilesRef.current[0],
+              {
+                x: x * 32,
+                y: y * 32,
+              },
+              "water"
+            )
+          } else if (x === 1) {
+            drawTile(
+              tilesRef.current[0],
+              {
+                x: x * 32,
+                y: y * 32,
+              },
+              "grassWaterleft"
+            )
+          } else {
+            drawTile(
+              tilesRef.current[0],
+              {
+                x: x * 32,
+                y: y * 32,
+              },
+              "grass"
+            )
+          }
         }
       }
+    }
+
+    for (let i = 0; i < 10; i++) {
+      ctx.drawImage(barrImg, i * 32, 0)
+
+      ctx.globalAlpha = 0.2
+
+      ctx.translate(i * 32, 16)
+      ctx.scale(1, 0.5)
+
+      ctx.drawImage(barrImg, 0, 0)
+
+      ctx.scale(1, 2)
+      ctx.translate(-i * 32, -16)
+      ctx.globalAlpha = 1
     }
 
     // ctx.globalCompositeOperation = "lighter";
