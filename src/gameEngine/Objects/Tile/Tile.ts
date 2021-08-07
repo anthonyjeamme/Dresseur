@@ -1,19 +1,54 @@
 import { TileSet } from "../TileSet/TileSet"
+import { TileCoords } from "./TileCoord/TileCoord"
 
 export class Tile {
-  tileset: TileSet
-  id: string
+  #id: string
+  #animation: any
+  #frames: TTileFrame[]
+  #tileset: TileSet
 
-  constructor(tileset: TileSet, id: string) {
-    this.tileset = tileset
-    this.id = id
+  message: "Super"
+
+  constructor({ id, animation, frames }, tileset: TileSet) {
+    this.#id = id
+    this.#animation = animation
+    this.#frames = frames.map(frame => ({
+      coords: new TileCoords(frame.coords),
+    }))
+    this.#tileset = tileset
   }
 
-  getImage() {
-    return this.tileset.definition.img
+  getId() {
+    return this.#id
   }
 
-  getCoords() {
-    return this.tileset.definition.tiles[this.id].coords
+  getAnimationProps() {
+    return this.#animation
   }
+
+  getFramesLength() {
+    return this.#frames.length
+  }
+
+  getFrame(index: number): TTileFrame {
+    if (!this.#frames[index])
+      throw `cannot get ${index} from in tile ${this.#id}`
+
+    return this.#frames[index]
+  }
+
+  getImg(): HTMLImageElement {
+    return this.#tileset.getImage()
+  }
+
+  getPath() {
+    return {
+      tile: this.#id,
+      tileSet: this.#tileset.id,
+    }
+  }
+}
+
+type TTileFrame = {
+  coords: TileCoords
 }

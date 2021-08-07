@@ -1,11 +1,37 @@
-export class TileSet {
-  definition = null
+import { Tile } from "../Tile/Tile"
 
-  constructor(definition) {
-    this.definition = definition
+export class TileSet {
+  id: string = null
+  title: string = null
+  tiles: { [key: string]: Tile } = null
+  img: HTMLImageElement = null
+
+  constructor({ id, title, tiles, img }) {
+    this.id = id
+    this.title = title
+    this.img = img
+
+    this.tiles = Object.keys(tiles)
+      .map(id => ({ id, tile: new Tile({ ...tiles[id], id }, this) }))
+      .reduce((tiles, { id, tile }) => {
+        tiles[id] = tile
+        return tiles
+      }, {})
   }
 
-  getImage() {
-    return this.definition.image
+  getTile(id: string): Tile {
+    return this.tiles[id]
+  }
+
+  getImage(): HTMLImageElement {
+    return this.img
+  }
+
+  toJSON() {
+    return {
+      imageUrl: this.img.src,
+      tile: this.title,
+      tiles: this.tiles,
+    }
   }
 }

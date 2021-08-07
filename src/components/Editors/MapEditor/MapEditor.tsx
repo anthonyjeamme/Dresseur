@@ -2,58 +2,71 @@ import React, { useEffect, useState, useRef } from "react"
 
 import Topbar from "./Topbar/Topbar"
 
-import { TSector } from "../../../gameEngine/Objects/Sector/Sector.types"
+import uniqid from "uniqid"
+
+import firebase from "firebase/app"
+import "firebase/firestore"
+
 import { TPosition } from "../../../gameEngine/Types/Math/Position"
-import { loadSector } from "../../../gameEngine/loader/loader"
-import { Tile } from "../../../gameEngine/Objects/Tile/Tile"
 import useIsMounted from "../../../utils/useIsMounted"
 
 import "./MapEditor.scss"
+import { useResourceLoader } from "../../../gameEngine/loader/loader"
+import {
+  renderTile,
+  renderTileMap,
+} from "../../../gameEngine/graphicEngine/graphicEngine"
 import { TileSet } from "../../../gameEngine/Objects/TileSet/TileSet"
+import { Tile } from "../../../gameEngine/Objects/Tile/Tile"
 
 const MapEditor = ({}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const positionRef = useRef<TPosition>({ x: 0, y: 0 })
   const isMounted = useIsMounted()
 
-  const currentTileRef = useRef({ tileSet: null, tile: null })
+  const gameResources = useResourceLoader()
+  const [loaded, setLoaded] = useState(false)
 
-  const [loadingStatus, setLoadingStatus] = useState("loading")
-  const sectorDataRef = useRef<{
-    id: string
-    sector: TSector
-    sectorDependencies: {
-      tileSets: TileSet[]
+  const [sideBarOpened, setSideBarOpened] = useState(true)
+
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === "b" && e.ctrlKey) {
+        setSideBarOpened(sideBarOpened => !sideBarOpened)
+      }
     }
-  }>(null)
 
-  const [tileSets, setTileSets] = useState<any>([])
+    window.addEventListener("keydown", handleKeyDown)
 
-  const mapRef = useRef([])
-  const getTileSet = id => {
-    return sectorDataRef.current.sectorDependencies.tileSets.find(
-      tileSet => tileSet.definition.id === id
-    )
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+  const load = async () => {
+    await gameResources.loadSector("ks1slznh")
+    await gameResources.loadSector("ks1slzni")
+    await gameResources.loadSector("ks1slznj")
+    await gameResources.loadSector("ks1slznk")
+    await gameResources.loadSector("ks259j72")
+    await gameResources.loadSector("ks259m9x")
+    await gameResources.loadSector("ks259ocl")
   }
 
   useEffect(() => {
-    loadSector("ks1slznh")
-      .then(sectorData => {
-        const { tileMap } = sectorData.sector.map
+    load()
+      .then(() => {
+        console.log(`Sector loaded`)
 
-        sectorDataRef.current = sectorData
-
-        setTileSets(sectorData.sectorDependencies.tileSets)
-
-        mapRef.current = tileMap.map(({ cells }) =>
-          cells.map(cell => new Tile(getTileSet(cell.tileSet), cell.tile))
-        )
-
-        setLoadingStatus("loaded")
+        setLoaded(true)
         startGameLoop()
       })
-      .catch()
+      .catch(err => {
+        console.log(`Error loading sector`)
+      })
   }, [])
+
+  const currentTileRef = useRef({ tileSet: null, tile: null })
 
   const currentMouseOver = useRef(null)
 
@@ -63,8 +76,8 @@ const MapEditor = ({}) => {
   })
 
   useEffect(() => {
-    canvasRef.current.height = Math.round((window.innerHeight - 38) / 4)
-    canvasRef.current.width = Math.round(window.innerWidth / 4)
+    canvasRef.current.height = Math.round((window.innerHeight - 38) / 2)
+    canvasRef.current.width = Math.round(window.innerWidth / 2)
   }, [])
 
   const startGameLoop = () => {
@@ -73,7 +86,6 @@ const MapEditor = ({}) => {
 
   const mapLoop = () => {
     if (!isMounted()) return
-
     const ctx = canvasRef.current.getContext("2d")
 
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
@@ -84,13 +96,23 @@ const MapEditor = ({}) => {
       -Math.round(positionRef.current.y)
     )
 
-    for (let y = 0; y < 32; y++) {
-      for (let x = 0; x < 32; x++) {
-        const cell = mapRef.current[y][x]
+    const sectors = gameResources.getSectorIds()
 
-        const [ox, oy, ow, oh] = cell.getCoords()
+    for (const sectorId of sectors) {
+      const sector = gameResources.getSector(sectorId)
 
-        ctx.drawImage(cell.getImage(), ox, oy, ow, oh, x * 32, y * 32, 32, 32)
+      if (sector) {
+        ctx.translate(
+          sector.globalPosition.x * 32 * 32,
+          sector.globalPosition.y * 32 * 32
+        )
+
+        renderTileMap(ctx, sector.map.tileMap)
+
+        ctx.translate(
+          -sector.globalPosition.x * 32 * 32,
+          -sector.globalPosition.y * 32 * 32
+        )
       }
     }
 
@@ -99,22 +121,18 @@ const MapEditor = ({}) => {
 
       ctx.fillStyle = "rgba(255,0,0,0.1)"
 
-      const cell = new Tile(getTileSet(tileSet), tile)
-      console.log(currentMouseOver.current.position.x)
+      // const cell = new Tile(getTileSet(tileSet), tile)
 
-      const [ox, oy, ow, oh] = cell.getCoords()
       ctx.globalAlpha = 0.7
-      ctx.drawImage(
-        cell.getImage(),
-        ox,
-        oy,
-        ow,
-        oh,
+
+      ctx.fillRect(
         currentMouseOver.current.position.x,
         currentMouseOver.current.position.y,
+
         32,
         32
       )
+
       ctx.globalAlpha = 1
     }
 
@@ -133,8 +151,8 @@ const MapEditor = ({}) => {
     const mousePosition = getMousePosition(e)
 
     if (mouseStatusRef.current.clickIdDown && e.ctrlKey) {
-      positionRef.current.x -= e.movementX / 4
-      positionRef.current.y -= e.movementY / 4
+      positionRef.current.x -= e.movementX / 2
+      positionRef.current.y -= e.movementY / 2
     } else if (mouseStatusRef.current.clickIdDown) {
       writeCell(mousePosition)
     }
@@ -149,8 +167,8 @@ const MapEditor = ({}) => {
 
   const getMousePosition = e => {
     const mousePosition: TPosition = {
-      x: Math.floor(e.clientX / 4 / 32 + positionRef.current.x / 32),
-      y: Math.floor((e.clientY - 38) / 4 / 32 + positionRef.current.y / 32),
+      x: Math.floor(e.clientX / 2 / 32 + positionRef.current.x / 32),
+      y: Math.floor((e.clientY - 38) / 2 / 32 + positionRef.current.y / 32),
     }
 
     return mousePosition
@@ -164,14 +182,57 @@ const MapEditor = ({}) => {
     writeCell(clickPosition)
   }
 
+  const findCurrentSector = (position: TPosition) => {
+    const x = Math.floor(position.x / 32)
+    const y = Math.floor(position.y / 32)
+
+    return gameResources.getSectorFromCoords({ x, y })
+  }
+
+  const createSector = async position => {
+    const result = window.prompt("Créer le secteur ?")
+
+    if (result === "y") {
+      console.log(position)
+      console.log("CREER")
+
+      await firebase
+        .firestore()
+        .collection("sectors")
+        .doc(uniqid())
+        .set({
+          ...gameResources.getSector("ks1slznh").toJSON(),
+          globalPosition: position,
+        })
+    }
+  }
+
   const writeCell = (position: TPosition) => {
-    if (!currentTileRef.current.tile) return
-    if (position.x < 0 || position.x > 31 || position.y < 0 || position.y > 31)
+    const sector = findCurrentSector(position)
+
+    if (!sector) {
+      createSector({
+        x: Math.floor(position.x / 32),
+        y: Math.floor(position.y / 32),
+      })
+
       return
+    }
+
+    if (!currentTileRef.current.tile) return
 
     const { tileSet, tile } = currentTileRef.current
 
-    mapRef.current[position.y][position.x] = new Tile(getTileSet(tileSet), tile)
+    const x = position.x - sector.globalPosition.x * 32
+    const y = position.y - sector.globalPosition.y * 32
+
+    if (
+      gameResources.getTile(tileSet, tile).getId() ===
+      sector.map.tileMap[y].cells[x].getId()
+    )
+      return
+
+    sector.map.tileMap[y].cells[x] = gameResources.getTile(tileSet, tile)
   }
 
   useEffect(() => {
@@ -190,12 +251,70 @@ const MapEditor = ({}) => {
 
   return (
     <div className="MapEditor">
-      <Topbar />
+      <Topbar
+        handleSave={async () => {
+          for (const sectorId of gameResources.getSectorIds()) {
+            await firebase
+              .firestore()
+              .collection("sectors")
+              .doc(sectorId)
+              .set(gameResources.getSector(sectorId).toJSON())
+          }
+          console.log("SAVED")
+        }}
+      />
 
       <div className="content">
         <canvas ref={canvasRef} />
 
-        <div className="Sidebar">
+        {loaded && (
+          <div className={`Sidebar ${sideBarOpened ? "active" : ""}`}>
+            <button
+              onClick={() => {
+                gameResources.loadSector("ks1slzni")
+              }}
+            >
+              LOAD 1x0
+            </button>
+
+            <button
+              onClick={() => {
+                gameResources.loadSector("ks1slznj")
+              }}
+            >
+              LOAD 0x1
+            </button>
+            <button
+              onClick={() => {
+                gameResources.loadSector("ks1slznk")
+              }}
+            >
+              LOAD 1x1
+            </button>
+
+            {Object.values(gameResources.getResources().tileSets).map(
+              // @ts-ignore
+              (tileSet: TileSet) => (
+                <div key={tileSet.id} className="tileset">
+                  <div>tileset : {tileSet.id}</div>
+
+                  <div className="tiles">
+                    {Object.values(tileSet.tiles).map(tile => (
+                      <DisplayTile
+                        key={tile.getId()}
+                        tile={tile}
+                        handleClick={() => {
+                          currentTileRef.current = tile.getPath()
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            )}
+
+            {/* 
+
           {Object.values(tileSets).map((tileSet, i) => (
             <div className="TileSet" key={i}>
               {Object.keys(tileSet.definition.tiles).map(tile => (
@@ -217,8 +336,9 @@ const MapEditor = ({}) => {
                 />
               ))}
             </div>
-          ))}
-        </div>
+          ))} */}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -226,15 +346,23 @@ const MapEditor = ({}) => {
 
 export default MapEditor
 
-const DisplayTile = ({ tileSet, tile, handleClick }) => {
+const DisplayTile = ({
+  tile,
+  handleClick,
+}: {
+  tile: Tile
+  handleClick: any
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d")
 
-    const [ox, oy, ow, oh] = tile.coords
+    renderTile(ctx, tile, { x: 0, y: 0 })
 
-    ctx.drawImage(tileSet.definition.img, ox, oy, ow, oh, 0, 0, 32, 32)
+    // const [ox, oy, ow, oh] = tile.coords
+
+    // ctx.drawImage(tileSet.definition.img, ox, oy, ow, oh, 0, 0, 32, 32)
   }, [])
 
   console.log(tile)

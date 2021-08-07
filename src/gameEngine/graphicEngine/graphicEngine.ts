@@ -48,3 +48,44 @@ const renderTiles = (scene: Scene, ctx: CanvasRenderingContext2D) => {
     }
   }
 }
+
+export const renderMap = (ctx: CanvasRenderingContext2D, map: Tile[][]) => {
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < 3; x++) {
+      renderTile(ctx, map[y][x], { x: x * 32, y: y * 32 })
+    }
+  }
+}
+
+export const renderTileMap = (
+  ctx: CanvasRenderingContext2D,
+  map: { cells: Tile[] }[]
+) => {
+  for (let y = 0; y < 32; y++) {
+    for (let x = 0; x < 32; x++) {
+      renderTile(ctx, map[y].cells[x], {
+        x: x * 32,
+        y: y * 32,
+      })
+    }
+  }
+}
+
+export const renderTile = (
+  ctx: CanvasRenderingContext2D,
+  tile: Tile,
+  position: TPosition
+) => {
+  const frame =
+    Math.round(new Date().getTime() / tile.getAnimationProps().frameDuration) %
+    tile.getFramesLength()
+
+  ctx.drawImage(
+    tile.getImg(),
+    ...tile.getFrame(frame).coords.get(),
+    position.x,
+    position.y,
+    32,
+    32
+  )
+}

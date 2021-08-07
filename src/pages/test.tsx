@@ -1,60 +1,104 @@
-import firebase from "firebase/app"
-import "firebase/firestore"
+import React, { useEffect, useRef, useState } from "react"
+import { renderTileMap } from "../gameEngine/graphicEngine/graphicEngine"
+// import {
+//   renderMap,
+//   renderTile,
+//   renderTileMap,
+// } from "../gameEngine/graphicEngine/graphicEngine"
 
-import React, { useEffect } from "react"
-
-import uniqid from "uniqid"
-import {
-  loadSector,
-  loadSectorDependencies,
-  loadTileSet,
-} from "../gameEngine/loader/loader"
+import { useResourceLoader } from "../gameEngine/loader/loader"
 
 const Test = () => {
-  const sector: TSector = {
-    globalPosition: {
-      x: 0,
-      y: 0,
-    },
-    size: {
-      x: 32,
-      y: 32,
-    },
-    map: {
-      tileMap: Array.from(new Array(32)).map(() => ({
-        cells: Array.from(new Array(32)).map(() => ({
-          tile: "ks1ruxbr",
-          tileSet: "ks1rp7n1",
-        })),
-      })),
-    },
-    dependencies: {
-      tileSets: ["ks1rp7n1"],
-    },
-  }
+  const gameResources = useResourceLoader()
+
+  const canvasRef = useRef<HTMLCanvasElement>()
+  const [loaded, setLoaded] = useState(false)
+  // const sectorRef = useRef<any>()
 
   useEffect(() => {
-    firebase.firestore().collection("sectors").doc("ks1slznh").set(sector)
-
-    // loadSector("ks1slznh")
-    //   .then(sectorLoad => {
-    //     console.log("Zone loaded")
-    //     console.log(sectorLoad)
-    //   })
-    //   .catch(() => {
-    //     console.log("Problem when loading zone ")
-    //   })
+    gameResources
+      .loadSector("ks1slznh")
+      .then(() => {
+        console.log("Sector loaded ")
+        setLoaded(true)
+      })
+      .catch(() => {
+        console.log("Problem when loading sector")
+      })
   }, [])
 
-  return <div className="test"></div>
+  // useEffect(() => {
+  //   loadSector("ks1slznh")
+  //     .then(sectorLoad => {
+  //       sectorRef.current = sectorLoad
+
+  //       setLoaded(true)
+  //       draw()
+  //     })
+  //     .catch(() => {
+  //       console.log("Problem when loading zone ")
+  //     })
+  // }, [])
+
+  useEffect(() => {
+    if (loaded) {
+      draw()
+    }
+  }, [loaded])
+
+  const draw = () => {
+    const ctx = canvasRef.current.getContext("2d")
+
+    renderTileMap(ctx, gameResources.getSector("ks1slznh").map.tileMap)
+
+    requestAnimationFrame(draw)
+  }
+
+  // const draw = () => {
+  //   const ctx = canvasRef.current.getContext("2d")
+
+  //   renderTileMap(ctx, sectorRef.current.sector.map.tileMap)
+
+  //   window.requestAnimationFrame(draw)
+  // }
+
+  const height = 300
+  const width = 400
+
+  const zoom = 2
+
+  return (
+    <div
+      className="test"
+      style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <button
+        onClick={() => {
+          console.log(
+            JSON.parse(JSON.stringify(gameResources.getSector("ks1slznh")))
+          )
+        }}
+      >
+        TEST
+      </button>
+      <canvas
+        ref={canvasRef}
+        height={height}
+        width={width}
+        style={{
+          height: height * zoom,
+          width: width * zoom,
+          border: "2px solid black",
+        }}
+      />
+    </div>
+  )
 }
 export default Test
 
-type TSector = {
-  globalPosition: any
-  size: any
-  map: any
-  dependencies: {
-    tileSets: string[]
-  }
-}
+const random = array => array[Math.floor(Math.random() * array.length)]
