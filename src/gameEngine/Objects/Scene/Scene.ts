@@ -40,6 +40,11 @@ export class Scene {
       id: "grassWaterleft",
     }
 
+    const B = {
+      tile: this.tiles[0],
+      id: "ground",
+    }
+
     this.map = [
       [
         W,
@@ -47,9 +52,9 @@ export class Scene {
         GW,
         G,
         G,
-        G,
-        G,
-        G,
+        B,
+        B,
+        B,
         G,
         G,
         G,

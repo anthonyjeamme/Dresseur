@@ -1,0 +1,51 @@
+.MapEditor {
+  font-family: "Press Start 2P", cursive;
+  font-size: 10px;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  canvas {
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+  }
+
+  & > .content {
+    flex: 1;
+    display: flex;
+    position: relative;
+
+    & > canvas {
+      flex: 1;
+    }
+
+    & > .Sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 350px;
+      background-color: #eee;
+
+      border-left: 2px solid #bbb;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  }
+
+  .TileSet {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    .DisplayTile {
+      display: flex;
+      cursor: pointer;
+    }
+  }
+}

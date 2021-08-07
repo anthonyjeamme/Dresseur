@@ -1,0 +1,16 @@
+.Topbar {
+  background-color: #eee;
+  display: flex;
+  padding: 0 15px;
+  border-bottom: 2px solid #bbb;
+
+  & > .TopbarMenu {
+    padding: 5px 20px;
+    transition: background-color 200ms;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

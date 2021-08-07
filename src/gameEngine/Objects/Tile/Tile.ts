@@ -1,28 +1,19 @@
-import { isBrowser } from "../../../components/Game/Game"
+import { TileSet } from "../TileSet/TileSet"
 
 export class Tile {
-  image = null
-  imageSrc = null
-  json = null
-  isLoaded = false
+  tileset: TileSet
+  id: string
 
-  constructor(imageSrc, json) {
-    if (!isBrowser()) return
-
-    this.image = document.createElement("img")
-    this.imageSrc = imageSrc
-    this.json = json
+  constructor(tileset: TileSet, id: string) {
+    this.tileset = tileset
+    this.id = id
   }
 
-  load() {
-    return new Promise(res => {
-      this.image.src = this.imageSrc
-      const onLoad = () => {
-        res(null)
-        this.isLoaded = true
-        this.image.removeEventListener("load", onLoad)
-      }
-      this.image.addEventListener("load", onLoad)
-    })
+  getImage() {
+    return this.tileset.definition.img
+  }
+
+  getCoords() {
+    return this.tileset.definition.tiles[this.id].coords
   }
 }
