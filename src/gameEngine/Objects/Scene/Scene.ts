@@ -1,3 +1,4 @@
+import { isBrowser } from "../../../components/Game/Game"
 import { TPosition } from "../../Types/Math/Position"
 import { Tile } from "../Tile/Tile"
 
@@ -6,6 +7,8 @@ export class Scene {
   tiles = null
 
   constructor() {
+    if (!isBrowser()) return
+
     this.tiles = [
       new Tile("/res/tiles/ground/ground.png", {
         grass: {
