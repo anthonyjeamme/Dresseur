@@ -176,7 +176,10 @@ const Game = () => {
     const getDayColor = () => {
       const h = timeRef.current.h
       if (h > 9 && h < 20) return "#c9c8c6"
-      if (h > 7 && h < 21) return "#303566"
+
+      if (h > 8 && h < 21) return "#777d95"
+
+      if (h > 7 && h < 22) return "#303566"
 
       return "#1c1a40"
     }
