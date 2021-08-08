@@ -19,6 +19,7 @@ const ZOOM = 2
 
 const Game = () => {
   const canvasRef = useRef<HTMLCanvasElement>()
+  const shadowCanvasRef = useRef<HTMLCanvasElement>()
 
   const gameResources = useResourceLoader()
 
@@ -170,6 +171,24 @@ const Game = () => {
   const gameLoop = () => {
     recomputePosition()
 
+    const shadowCtx = shadowCanvasRef.current.getContext("2d")
+
+    const getDayColor = () => {
+      const h = timeRef.current.h
+      if (h > 9 && h < 20) return "#c9c8c6"
+      if (h > 7 && h < 21) return "#303566"
+
+      return "#1c1a40"
+    }
+
+    shadowCtx.fillStyle = getDayColor()
+    shadowCtx.fillRect(
+      0,
+      0,
+      shadowCanvasRef.current.width,
+      shadowCanvasRef.current.height
+    )
+
     const ctx = canvasRef.current.getContext("2d")
 
     ctx.save()
@@ -295,10 +314,14 @@ const Game = () => {
   useEffect(() => {
     canvasRef.current.height = window.innerHeight / currentZoom.current
     canvasRef.current.width = window.innerWidth / currentZoom.current
+    shadowCanvasRef.current.height = window.innerHeight / currentZoom.current
+    shadowCanvasRef.current.width = window.innerWidth / currentZoom.current
 
     const handleWindowResize = () => {
       canvasRef.current.height = window.innerHeight / currentZoom.current
       canvasRef.current.width = window.innerWidth / currentZoom.current
+      shadowCanvasRef.current.height = window.innerHeight / currentZoom.current
+      shadowCanvasRef.current.width = window.innerWidth / currentZoom.current
     }
 
     const handleWheel = e => {
@@ -340,6 +363,8 @@ const Game = () => {
         }}
         style={{}}
       />
+
+      <canvas ref={shadowCanvasRef} id="shadow-canvas" />
 
       {/* <canvas
         style={{
