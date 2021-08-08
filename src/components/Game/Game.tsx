@@ -142,8 +142,22 @@ const Game = () => {
   const positionRef = useRef({ x: 96 + 32, y: 64 })
   const vitesseRef = useRef({ x: 0, y: 0 })
   const lastLoopDateTime = useRef(new Date().getTime())
+  const torchRef = useRef(false)
 
   const currentZoom = useRef(ZOOM)
+
+  useEffect(() => {
+    const handleClick = e => {
+      if (e.key === "b") {
+        torchRef.current = !torchRef.current
+      }
+    }
+    window.addEventListener("keypress", handleClick)
+
+    return () => {
+      window.removeEventListener("keypress", handleClick)
+    }
+  }, [])
 
   const timeRef = useRef(getGameTime())
   const hourRef = useRef<HTMLDivElement>()
@@ -325,35 +339,40 @@ const Game = () => {
       return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
     }
 
-    centered(shadowCtx, () => {
-      shadowCtx.scale(1, 0.5)
+    if (torchRef.current)
+      centered(shadowCtx, () => {
+        shadowCtx.scale(1, 0.5)
 
-      const angle =
-        lastDirection.current === 3
-          ? 0
-          : lastDirection.current === 0
-          ? 1
-          : lastDirection.current === 2
-          ? 2
-          : 3
-      const rotation = (angle * Math.PI) / 2
+        const angle =
+          lastDirection.current === 3
+            ? 0
+            : lastDirection.current === 0
+            ? 1
+            : lastDirection.current === 2
+            ? 2
+            : 3
 
-      shadowCtx.rotate(rotation)
+        const rotation = (angle * Math.PI) / 2
 
-      var gradient = shadowCtx.createRadialGradient(20 + 20, 0, 20, 60, 0, 60)
-      gradient.addColorStop(0, `rgba(255,255,255,1)`)
+        shadowCtx.rotate(rotation)
 
-      for (var t = 0; t <= 1; t += 0.05) {
-        gradient.addColorStop(t, `rgba( 255,255,255, ${1 - easeInOut(t) * 1})`)
-      }
+        var gradient = shadowCtx.createRadialGradient(20 + 20, 0, 20, 60, 0, 60)
+        gradient.addColorStop(0, `rgba(255,255,255,1)`)
 
-      gradient.addColorStop(1, `rgba(255,255,255, 0)`)
-      shadowCtx.fillStyle = gradient
-      shadowCtx.fillRect(-300, -300, 600, 600)
+        for (var t = 0; t <= 1; t += 0.05) {
+          gradient.addColorStop(
+            t,
+            `rgba( 255,255,255, ${1 - easeInOut(t) * 1})`
+          )
+        }
 
-      shadowCtx.rotate(-rotation)
-      shadowCtx.scale(1, 2)
-    })
+        gradient.addColorStop(1, `rgba(255,255,255, 0)`)
+        shadowCtx.fillStyle = gradient
+        shadowCtx.fillRect(-300, -300, 600, 600)
+
+        shadowCtx.rotate(-rotation)
+        shadowCtx.scale(1, 2)
+      })
 
     for (const light of lights) {
       // console.log(light)
@@ -621,6 +640,14 @@ const Game = () => {
             }}
           >
             R
+          </button>
+
+          <button
+            onClick={() => {
+              torchRef.current = !torchRef.current
+            }}
+          >
+            T
           </button>
         </div>
       </div>
