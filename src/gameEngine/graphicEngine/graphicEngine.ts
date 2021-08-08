@@ -65,7 +65,9 @@ export const renderObjects = (ctx: CanvasRenderingContext2D, objects) => {
   const sorted = objects.sort((a, b) => a.position.y - b.position.y)
 
   for (const object of sorted) {
-    ctx.translate(-32, -32 * 3)
+    ctx.translate(-object.origin.x, -object.origin.y)
+
+    // console.log(object.origin)
 
     ctx.fillStyle = "rgba(25, 12, 70, 0.25)"
     ctx.scale(1, 0.5)
@@ -82,7 +84,7 @@ export const renderObjects = (ctx: CanvasRenderingContext2D, objects) => {
 
     renderTile(ctx, object.tile, object.position, { h: 32 * 3, w: 32 * 2 })
 
-    ctx.translate(32, 32 * 3)
+    ctx.translate(object.origin.x, object.origin.y)
   }
 }
 

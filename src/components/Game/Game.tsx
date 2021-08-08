@@ -35,6 +35,7 @@ const Game = () => {
 
   const positionRef = useRef({ x: 96 + 32, y: 64 })
   const vitesseRef = useRef({ x: 0, y: 0 })
+  const lastLoopDateTime = useRef(new Date().getTime())
 
   const currentZoom = useRef(ZOOM)
 
@@ -78,15 +79,18 @@ const Game = () => {
   }
 
   useEffect(() => {
-    const interval = setInterval(gameLoop, 20)
+    gameLoop()
+    // const interval = setInterval(gameLoop, 20)
     const hourInterval = setInterval(timeLoop, 600)
     return () => {
-      clearInterval(interval)
+      // clearInterval(interval)
       clearInterval(hourInterval)
     }
   }, [])
 
   const recomputePosition = () => {
+    const dt = new Date().getTime() - lastLoopDateTime.current
+
     const nextPosition = { x: positionRef.current.x, y: positionRef.current.y }
 
     const MAX_SPEED = 2.5
@@ -136,8 +140,8 @@ const Game = () => {
       }
     }
 
-    nextPosition.x = nextPosition.x + vitesseRef.current.x
-    nextPosition.y = nextPosition.y + vitesseRef.current.y
+    nextPosition.x = nextPosition.x + (vitesseRef.current.x * dt) / 20
+    nextPosition.y = nextPosition.y + (vitesseRef.current.y * dt) / 20
 
     const tileCoord = {
       x: Math.floor(Math.round(nextPosition.x) / 32),
@@ -159,6 +163,8 @@ const Game = () => {
     } catch {
       //
     }
+
+    lastLoopDateTime.current = new Date().getTime()
   }
 
   const gameLoop = () => {
@@ -282,6 +288,8 @@ const Game = () => {
     ctx.translate(positionRef.current.x, positionRef.current.y)
 
     ctx.restore()
+
+    window.requestAnimationFrame(gameLoop)
   }
 
   useEffect(() => {
