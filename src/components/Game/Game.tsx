@@ -66,7 +66,7 @@ const getBetweenColor = ([r1, g1, b1], [r2, g2, b2], ratio) => [
 const getColorFromGradient = (gradient, position) => {
   if (position < 0 || position > 1) throw `Out of gradient range`
 
-  if (position <= gradient[0].position) return `rgba(${gradient[0].color})`
+  if (position <= gradient[0].position) return gradient[0].color
 
   for (let i = 0; i < gradient.length; i++) {
     const step = gradient[i]
