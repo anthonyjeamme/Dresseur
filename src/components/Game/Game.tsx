@@ -15,7 +15,7 @@ import "./Game.scss"
 
 export const isBrowser = () => typeof window !== "undefined"
 
-const ZOOM = 2
+const ZOOM = 3
 
 const gradient = [
   {
@@ -126,6 +126,13 @@ const Game = () => {
     await gameResources.loadSector({ x: 0, y: 0 })
   }
 
+  const mobileButtonRef = useRef({
+    u: false,
+    d: false,
+    l: false,
+    r: false,
+  })
+
   useEffect(() => {
     load()
   }, [])
@@ -194,18 +201,20 @@ const Game = () => {
     const MAX_SPEED = 2.5
     const speed = 10
 
-    if (keyboard.isActive("ACTION_GO_UP")) {
+    if (keyboard.isActive("ACTION_GO_UP") || mobileButtonRef.current.u) {
       lastDirection.current = 1
       vitesseRef.current.y = Math.max(vitesseRef.current.y - 0.4, -MAX_SPEED)
     }
-    if (keyboard.isActive("ACTION_GO_DOWN")) {
+    if (keyboard.isActive("ACTION_GO_DOWN") || mobileButtonRef.current.d) {
       lastDirection.current = 0
       vitesseRef.current.y = Math.min(vitesseRef.current.y + 0.4, MAX_SPEED)
     }
 
     if (
       !keyboard.isActive("ACTION_GO_UP") &&
-      !keyboard.isActive("ACTION_GO_DOWN")
+      !keyboard.isActive("ACTION_GO_DOWN") &&
+      !mobileButtonRef.current.u &&
+      !mobileButtonRef.current.d
     ) {
       if (vitesseRef.current.y > -0.4 && vitesseRef.current.y < 0.4)
         vitesseRef.current.y = 0
@@ -216,18 +225,20 @@ const Game = () => {
       }
     }
 
-    if (keyboard.isActive("ACTION_GO_LEFT")) {
+    if (keyboard.isActive("ACTION_GO_LEFT") || mobileButtonRef.current.l) {
       lastDirection.current = 2
       vitesseRef.current.x = Math.max(vitesseRef.current.x - 0.4, -MAX_SPEED)
     }
-    if (keyboard.isActive("ACTION_GO_RIGHT")) {
+    if (keyboard.isActive("ACTION_GO_RIGHT") || mobileButtonRef.current.r) {
       lastDirection.current = 3
       vitesseRef.current.x = Math.min(vitesseRef.current.x + 0.4, MAX_SPEED)
     }
 
     if (
       !keyboard.isActive("ACTION_GO_LEFT") &&
-      !keyboard.isActive("ACTION_GO_RIGHT")
+      !keyboard.isActive("ACTION_GO_RIGHT") &&
+      !mobileButtonRef.current.l &&
+      !mobileButtonRef.current.r
     ) {
       if (vitesseRef.current.x > -0.4 && vitesseRef.current.x < 0.4)
         vitesseRef.current.x = 0
@@ -438,7 +449,11 @@ const Game = () => {
       keyboard.isActive("ACTION_GO_DOWN") ||
         keyboard.isActive("ACTION_GO_UP") ||
         keyboard.isActive("ACTION_GO_LEFT") ||
-        keyboard.isActive("ACTION_GO_RIGHT")
+        keyboard.isActive("ACTION_GO_RIGHT") ||
+        mobileButtonRef.current.d ||
+        mobileButtonRef.current.u ||
+        mobileButtonRef.current.l ||
+        mobileButtonRef.current.r
         ? 30 * frame
         : 0,
 
@@ -551,6 +566,53 @@ const Game = () => {
       />
 
       <canvas ref={shadowCanvasRef} id="shadow-canvas" />
+
+      <div className="mobile-buttons">
+        <div>
+          <button
+            onTouchStart={() => {
+              mobileButtonRef.current.u = true
+            }}
+            onTouchEnd={() => {
+              mobileButtonRef.current.u = false
+            }}
+          >
+            UP
+          </button>
+        </div>
+        <div>
+          <button
+            onTouchStart={() => {
+              mobileButtonRef.current.l = true
+            }}
+            onTouchEnd={() => {
+              mobileButtonRef.current.l = false
+            }}
+          >
+            L
+          </button>
+          <button
+            onTouchStart={() => {
+              mobileButtonRef.current.d = true
+            }}
+            onTouchEnd={() => {
+              mobileButtonRef.current.d = false
+            }}
+          >
+            D
+          </button>
+          <button
+            onTouchStart={() => {
+              mobileButtonRef.current.r = true
+            }}
+            onTouchEnd={() => {
+              mobileButtonRef.current.r = false
+            }}
+          >
+            R
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
