@@ -29,6 +29,7 @@ const drawTile = (
   name: string,
   ctx: CanvasRenderingContext2D
 ) => {
+  // @ts-ignore
   const { coords }: { coords: number[] } = tile.json[name]
 
   if (!coords) {
@@ -36,6 +37,7 @@ const drawTile = (
     return
   }
 
+  // @ts-ignore
   ctx.drawImage(tile.image, ...coords, position.x, position.y, 32, 32)
 }
 
@@ -59,14 +61,25 @@ export const renderMap = (ctx: CanvasRenderingContext2D, map: Tile[][]) => {
 
 export const renderTileMap = (
   ctx: CanvasRenderingContext2D,
-  map: { cells: Tile[] }[]
+  map: { cells: { base: Tile; over: Tile[] }[] }[]
 ) => {
   for (let y = 0; y < 32; y++) {
     for (let x = 0; x < 32; x++) {
-      renderTile(ctx, map[y].cells[x], {
-        x: x * 32,
-        y: y * 32,
-      })
+      try {
+        renderTile(ctx, map[y].cells[x].base, {
+          x: x * 32,
+          y: y * 32,
+        })
+      } catch (err) {
+        console.log("err", err)
+      }
+
+      for (const over of map[y].cells[x].over) {
+        renderTile(ctx, over, {
+          x: x * 32,
+          y: y * 32,
+        })
+      }
     }
   }
 }

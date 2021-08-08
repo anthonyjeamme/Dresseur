@@ -6,12 +6,16 @@ export class Tile {
   #animation: any
   #frames: TTileFrame[]
   #tileset: TileSet
+  over: boolean
+  walkable: boolean
 
   message: "Super"
 
-  constructor({ id, animation, frames }, tileset: TileSet) {
+  constructor({ id, animation, frames, over, walkable }, tileset: TileSet) {
     this.#id = id
+    this.walkable = walkable || false
     this.#animation = animation
+    this.over = over || false
     this.#frames = frames.map(frame => ({
       coords: new TileCoords(frame.coords),
     }))

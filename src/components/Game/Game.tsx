@@ -14,7 +14,7 @@ import "./Game.scss"
 
 export const isBrowser = () => typeof window !== "undefined"
 
-const ZOOM = 3
+const ZOOM = 2
 
 const Game = () => {
   const canvasRef = useRef<HTMLCanvasElement>()
@@ -22,13 +22,8 @@ const Game = () => {
   const gameResources = useResourceLoader()
 
   const load = async () => {
-    await gameResources.loadSector("ks1slznh")
-    await gameResources.loadSector("ks1slzni")
-    await gameResources.loadSector("ks1slznj")
-    await gameResources.loadSector("ks1slznk")
-    await gameResources.loadSector("ks259j72")
-    await gameResources.loadSector("ks259m9x")
-    await gameResources.loadSector("ks259ocl")
+    await gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
+    await gameResources.loadSector({ x: 0, y: 0 })
   }
 
   useEffect(() => {
@@ -144,13 +139,24 @@ const Game = () => {
     nextPosition.y = nextPosition.y + vitesseRef.current.y
 
     const tileCoord = {
-      x: Math.floor(nextPosition.x / 64),
-      y: Math.floor(nextPosition.y / 64),
+      x: Math.floor(Math.round(nextPosition.x) / 32),
+      y: Math.floor(Math.round(nextPosition.y) / 32),
     }
 
-    positionRef.current = {
-      x: Math.round(nextPosition.x),
-      y: Math.round(nextPosition.y),
+    const sector = gameResources.getSectorFromCoords({ x: 0, y: 0 })
+
+    try {
+      const { walkable } =
+        sector.map.tileMap[tileCoord.y].cells[tileCoord.x].base
+
+      if (walkable) {
+        positionRef.current = {
+          x: Math.round(nextPosition.x),
+          y: Math.round(nextPosition.y),
+        }
+      }
+    } catch {
+      //
     }
   }
 
@@ -165,6 +171,11 @@ const Game = () => {
     const sectors = gameResources.getSectorIds()
 
     ctx.translate(-positionRef.current.x, -positionRef.current.y)
+
+    ctx.translate(
+      Math.round(canvasRef.current.width / 2),
+      Math.round(canvasRef.current.height / 2)
+    )
 
     for (const sectorId of sectors) {
       const sector = gameResources.getSector(sectorId)
@@ -184,136 +195,22 @@ const Game = () => {
       }
     }
 
-    // const ctx = canvasRef.current.getContext("2d")
-    // ctx.imageSmoothingEnabled = false
-
-    // const drawTile = (tile: Tile, position: TPosition, name: string) => {
-    //   const { coords }: number[] = tile.json[name]
-
-    //   if (!coords) {
-    //     throw `Unknown tile name '${name}'`
-    //     return
-    //   }
-
-    //   ctx.drawImage(tile.image, ...coords, position.x, position.y, 32, 32)
-    // }
-
-    // ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-
-    // const tileCoords = {
-    //   ground: { x: 30, y: 64 + 64 + 32, w: 64, h: 64 },
-    //   grass: { x: 30, y: 64, w: 64, h: 64 },
-    //   marble: { x: 30, y: 64 + 64 + 32 + 96 + 32, w: 64, h: 64 },
-    //   groundGrassLeft: {
-    //     x: 200,
-    //     y: 160,
-    //     w: 32,
-    //     h: 32,
-    //   },
-    //   groundGrassTop: {
-    //     x: 216,
-    //     y: 130,
-    //     w: 32,
-    //     h: 32,
-    //   },
-    // }
-
-    // // ctx.translate(window.innerWidth, window.innerHeight)
-
-    // render(sceneRef.current, ctx, positionRef.current)
-
-    // ctx.translate(
-    //   window.innerWidth / currentZoom.current / 2,
-    //   window.innerHeight / currentZoom.current / 2
-    // )
-
-    // const TILE_SIZE = 64 / 8
-
-    // ctx.translate(-positionRef.current.x, -positionRef.current.y)
-
-    // // for (let i = 0; i < 10; i++) {
-    // //   ctx.drawImage(barrImg, 64 + i * 32, 0)
-    // // }
-
-    // // ctx.globalCompositeOperation = "lighter";
-
-    // // ctx.translate(-positionRef.current.x, -positionRef.current.y)
-
-    // // ctx.globalCompositeOperation = "darker";
-    // // ctx.fillStyle = `rgba(0,0,0, ${0.3})`;
-    // // // ctx.fillRect(0, 0, window.innerWidth / 2, window.innerHeight)
-
-    // // // var gradient = ctx.createLinearGradient(0, 0, 1000, 0);
-    // // // gradient.addColorStop(0, "rgba(0,0,0,0.6)");
-    // // // gradient.addColorStop(1, "transparent");
-    // // // ctx.fillStyle = gradient;
-    // // // ctx.fillRect(0, 0, 2000, window.innerHeight)
-
-    // // var gradient = ctx.createRadialGradient(110, 90, 30, 100, 100, 70);
-
-    // // ctx.globalCompositeOperation = "lighter";
-    // // // Add three color stops
-    // // gradient.addColorStop(0, 'rgba(255,255,200,0.2)');
-    // // gradient.addColorStop(1, 'transparent');
-
-    // // // Set the fill style and draw a rectangle
-    // // ctx.fillStyle = gradient;
-    // // ctx.fillRect(20, 20, 160, 160);
-
-    // ctx.translate(positionRef.current.x, positionRef.current.y)
-
-    // ctx.save()
-
-    // ctx.translate(-positionRef.current.x, -positionRef.current.y)
-
-    // // ctx.globalCompositeOperation = "lighter"
-    // // for (const light of lights) {
-    // //   const x = light.position.x
-    // //   const y = light.position.y
-    // //   const radius = light.radius
-
-    // //   var gradient = ctx.createRadialGradient(
-    // //     x,
-    // //     y,
-    // //     light.innerRadius,
-    // //     x,
-    // //     y,
-    // //     light.radius + Math.round(Math.random() * 20)
-    // //   )
-    // //   gradient.addColorStop(
-    // //     0,
-    // //     `rgba(${light.color.join(",")},${
-    // //       light.intensity + (Math.random() / 30 - 1 / 30)
-    // //     })`
-    // //   )
-    // //   gradient.addColorStop(1, `rgba(${light.color.join(",")},${0})`)
-    // //   ctx.fillStyle = gradient
-    // //   ctx.fillRect(
-    // //     light.position.x - radius - 50,
-    // //     light.position.y - radius - 50,
-    // //     radius * 2 + 100,
-    // //     radius * 2 + 100
-    // //   )
-    // // }
-
-    // ctx.restore()
-
-    const frame = Math.round(new Date().getTime() / 60) % 6
-
-    // ctx.fillStyle = "rgba(0,0,0,0.5)"
-    // ctx.scale(1, 0.5)
-    // ctx.beginPath()
-    // ctx.arc(-10, -2, 7, 0, 2 * Math.PI)
-    // ctx.lineWidth = 1
-    // ctx.fill()
-    // ctx.scale(1, 2)
-
     ctx.restore()
+    const frame = Math.round(new Date().getTime() / 60) % 6
 
     ctx.translate(
       Math.round(canvasRef.current.width / 2),
       Math.round(canvasRef.current.height / 2)
     )
+
+    ctx.fillStyle = "rgba(25, 12, 70, 0.4)"
+
+    ctx.scale(1, 0.5)
+    ctx.beginPath()
+    ctx.arc(0, 0, 10, 0, 2 * Math.PI)
+    ctx.fill()
+
+    ctx.scale(1, 2)
 
     ctx.drawImage(
       joeImg,
@@ -339,6 +236,8 @@ const Game = () => {
       -Math.round(canvasRef.current.width / 2),
       -Math.round(canvasRef.current.height / 2)
     )
+
+    // ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height)
 
     ctx.restore()
   }
@@ -389,7 +288,23 @@ const Game = () => {
         onContextMenu={e => {
           e.preventDefault()
         }}
+        style={{}}
       />
+
+      {/* <canvas
+        style={{
+          position: "fixed",
+          zIndex: 2,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          // filter: "grayscale(80%)",
+          backgroundColor: "transparent",
+          backgroundImage:
+            "linear-gradient(to bottom, transparent 0%, black 100%)",
+        }}
+      /> */}
     </div>
   )
 }

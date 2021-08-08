@@ -1,6 +1,9 @@
 import firebase from "firebase/app"
 import "firebase/firestore"
+
 import { useRef } from "react"
+
+import { positionAreEqual } from "../../components/utils/math"
 import { Sector } from "../Objects/Sector/Sector"
 
 import { TSector } from "../Objects/Sector/Sector.types"
@@ -14,15 +17,38 @@ export const useResourceLoader = () => {
     tileSets: {},
   })
 
+  const loadingList = useRef<string[]>([])
+
+  const mapRef = useRef<any>()
+
   const freeSector = async (id: string) => {
     sectorsRef.current[id] = undefined
   }
 
-  const loadSector = async (id: string) => {
-    if (sectorsRef.current[id]) {
-      console.log(`sector ${id} already loaded`)
-      // return
+  const loadSector = async (position: TPosition) => {
+    if (!mapRef.current) return
+    const findSector = mapRef.current.sectors.find(sector =>
+      positionAreEqual(sector.position, position)
+    )
+
+    if (!findSector) {
+      // console.log(`[LOADER] No sector exists at (${position.x},${position.y})`)
+      return
     }
+
+    const { id } = findSector
+
+    if (sectorsRef.current[id]) {
+      console.log(`[LOADER] Sector ${id} already loaded`)
+      return
+    }
+
+    if (loadingList.current.includes(id)) {
+      console.log("already loading")
+      return
+    }
+
+    loadingList.current.push(id)
 
     const { sector, dependencies } = await _loadSector(id, resourcesRef.current)
 
@@ -32,6 +58,8 @@ export const useResourceLoader = () => {
       resourcesRef.current.tileSets[tileSetId] =
         dependencies.tileSets[tileSetId]
     }
+
+    loadingList.current = loadingList.current.filter(_ => _ !== id)
   }
 
   const getSector = (id: string) => {
@@ -66,7 +94,16 @@ export const useResourceLoader = () => {
     return Object.keys(sectorsRef.current)
   }
 
+  const loadMap = async (mapId: string) => {
+    const map = (
+      await firebase.firestore().collection("maps").doc(mapId).get()
+    ).data()
+
+    mapRef.current = map
+  }
+
   return {
+    loadMap,
     getSectorIds,
     getTile,
     freeSector,
@@ -87,7 +124,7 @@ export const _loadSector = async (id: string, resources): Promise<any> => {
   const dependencies = await loadSectorDependencies(sector, resources)
 
   console.log(
-    `[LOADER] sector [${id}] loaded in ${
+    `[LOADER] Sector [${id}] loaded in ${
       new Date().getTime() - beforeDateTime
     }ms`
   )
@@ -98,9 +135,14 @@ export const _loadSector = async (id: string, resources): Promise<any> => {
       ...sector,
       map: {
         tileMap: sector.map.tileMap.map(line => ({
-          cells: line.cells.map(({ tile, tileSet }) =>
-            dependencies.tileSets[tileSet].getTile(tile)
-          ),
+          cells: line.cells.map(({ tile, tileSet, base, over }) => {
+            return {
+              base: dependencies.tileSets[base.tileSet].getTile(base.tile),
+              over: over.map(({ tileSet, tile }) =>
+                dependencies.tileSets[tileSet].getTile(tile)
+              ),
+            }
+          }),
         })),
       },
     },

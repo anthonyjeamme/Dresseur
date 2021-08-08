@@ -15,6 +15,7 @@
 
     & > canvas {
       flex: 1;
+      background-color: black;
     }
 
     & > .Sidebar {
@@ -50,5 +51,9 @@
         background-color: red;
       }
     }
+  }
+  .DisplayTile {
+    font-size: 8px;
+    cursor: pointer;
   }
 }
