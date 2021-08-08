@@ -56,6 +56,24 @@ const gradient = [
   },
 ]
 
+const lights = [
+  {
+    position: { x: 32 * 10, y: 32 * 10 },
+    color: [230, 214, 174],
+    intensity: 1,
+  },
+  {
+    position: { x: 32 * 14, y: 32 * 10 },
+    color: [230, 255, 174],
+    intensity: 0.8,
+  },
+  {
+    position: { x: 32 * 18, y: 32 * 10 },
+    color: [255, 214, 174],
+    intensity: 0.8,
+  },
+]
+
 const getBetweenNumber = (a, b, ratio) => a + (b - a) * ratio
 const getBetweenColor = ([r1, g1, b1], [r2, g2, b2], ratio) => [
   Math.round(getBetweenNumber(r1, r2, ratio)),
@@ -276,8 +294,9 @@ const Game = () => {
 
     const getDayColor = () => {
       const position =
+        0.1 ||
         new Date().getTime() / 1000 / 60 / 60 -
-        Math.floor(new Date().getTime() / 1000 / 60 / 60)
+          Math.floor(new Date().getTime() / 1000 / 60 / 60)
 
       const ambianceColor = getColorFromGradient(gradient, position)
 
@@ -291,6 +310,57 @@ const Game = () => {
       shadowCanvasRef.current.width,
       shadowCanvasRef.current.height
     )
+
+    function easeInOut(t) {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+    }
+
+    for (const light of lights) {
+      // console.log(light)
+
+      centered(shadowCtx, () => {
+        positionTranslated(shadowCtx, () => {
+          shadowCtx.translate(light.position.x, light.position.y)
+
+          var gradient = shadowCtx.createRadialGradient(0, 0, 20, 0, 0, 100)
+          gradient.addColorStop(
+            0,
+            `rgba(${light.color.join(",")}, ${light.intensity})`
+          )
+
+          // gradient.addColorStop(
+          //   0.3,
+          //   `rgba(${light.color.join(",")}, ${light.intensity / 2})`
+          // )
+
+          // gradient.addColorStop(
+          //   0.5,
+          //   `rgba(${light.color.join(",")}, ${light.intensity / 4})`
+          // )
+
+          // gradient.addColorStop(
+          //   0.6,
+          //   `rgba(${light.color.join(",")}, ${light.intensity / 8})`
+          // )
+
+          for (var t = 0; t <= 1; t += 0.1) {
+            // convert linear t to "easing" t:
+            gradient.addColorStop(
+              t,
+              `rgba( ${light.color.join(",")}, ${
+                light.intensity - easeInOut(t) * light.intensity
+              })`
+            )
+          }
+
+          gradient.addColorStop(1, `rgba(${light.color.join(",")}, 0)`)
+          shadowCtx.fillStyle = gradient
+          shadowCtx.fillRect(-100, -100, 200, 200)
+
+          shadowCtx.translate(-light.position.x, -light.position.y)
+        })
+      })
+    }
 
     const ctx = canvasRef.current.getContext("2d")
 
