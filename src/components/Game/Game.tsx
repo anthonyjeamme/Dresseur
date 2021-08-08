@@ -305,9 +305,8 @@ const Game = () => {
 
     const getDayColor = () => {
       const position =
-        0.1 ||
         new Date().getTime() / 1000 / 60 / 60 -
-          Math.floor(new Date().getTime() / 1000 / 60 / 60)
+        Math.floor(new Date().getTime() / 1000 / 60 / 60)
 
       const ambianceColor = getColorFromGradient(gradient, position)
 
