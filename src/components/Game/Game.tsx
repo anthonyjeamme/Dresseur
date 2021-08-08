@@ -65,8 +65,8 @@ const getBetweenColor = ([r1, g1, b1], [r2, g2, b2], ratio) => [
 
 const getGameTime = () => {
   const position =
-    new Date().getTime() / 1000 / 60 -
-    Math.floor(new Date().getTime() / 1000 / 60)
+    new Date().getTime() / 1000 / 60 / 60 -
+    Math.floor(new Date().getTime() / 1000 / 60 / 60)
 
   const dayTime = position * 60 * 24
 
@@ -156,8 +156,6 @@ const Game = () => {
 
   const timeLoop = () => {
     const { h, m } = getGameTime()
-
-    console.log(m)
 
     hourRef.current.innerHTML = `${`0${h}`.slice(-2)}h${`0${m}`.slice(-2)}`
   }
@@ -249,6 +247,26 @@ const Game = () => {
     lastLoopDateTime.current = new Date().getTime()
   }
 
+  const centered = (ctx, func) => {
+    ctx.translate(
+      Math.round(canvasRef.current.width / 2),
+      Math.round(canvasRef.current.height / 2)
+    )
+
+    func()
+
+    ctx.translate(
+      -Math.round(canvasRef.current.width / 2),
+      -Math.round(canvasRef.current.height / 2)
+    )
+  }
+
+  const positionTranslated = (ctx, func) => {
+    ctx.translate(-positionRef.current.x, -positionRef.current.y)
+    func()
+    ctx.translate(positionRef.current.x, positionRef.current.y)
+  }
+
   const gameLoop = () => {
     recomputePosition()
 
@@ -258,8 +276,8 @@ const Game = () => {
 
     const getDayColor = () => {
       const position =
-        new Date().getTime() / 1000 / 60 -
-        Math.floor(new Date().getTime() / 1000 / 60)
+        new Date().getTime() / 1000 / 60 / 60 -
+        Math.floor(new Date().getTime() / 1000 / 60 / 60)
 
       const ambianceColor = getColorFromGradient(gradient, position)
 
@@ -313,6 +331,7 @@ const Game = () => {
     }
 
     ctx.restore()
+
     const frame = Math.round(new Date().getTime() / 60) % 6
 
     ctx.translate(
@@ -393,6 +412,16 @@ const Game = () => {
 
     ctx.restore()
 
+    centered(ctx, () => {
+      ctx.fillStyle = "red"
+      ctx.fillRect(-6, -6, 12, 12)
+
+      positionTranslated(ctx, () => {
+        ctx.fillStyle = "red"
+        ctx.fillRect(-6, -6, 12, 12)
+      })
+    })
+
     window.requestAnimationFrame(gameLoop)
   }
 
@@ -437,9 +466,7 @@ const Game = () => {
     <div className="Game">
       {/* <audio src="/audio/music_jeu.mp3" loop={true} autoPlay={true} /> */}
 
-      <div className="hours" ref={hourRef}>
-        01h00
-      </div>
+      <div className="hours" ref={hourRef}></div>
 
       <canvas
         ref={canvasRef}
