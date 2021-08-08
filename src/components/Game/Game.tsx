@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react"
+import { useAudioEngine } from "../../gameEngine/audioEngine/audioEngine"
 import {
   render,
   renderMap,
@@ -118,6 +119,8 @@ const getColorFromGradient = (gradient, position) => {
 const Game = () => {
   const canvasRef = useRef<HTMLCanvasElement>()
   const shadowCanvasRef = useRef<HTMLCanvasElement>()
+
+  useAudioEngine()
 
   const gameResources = useResourceLoader()
 
@@ -571,7 +574,7 @@ const Game = () => {
 
   return (
     <div className="Game">
-      {/* <audio src="/audio/music_jeu.mp3" loop={true} autoPlay={true} /> */}
+      {/* <audio src="/audio/music1.mp3" loop={true} autoPlay={true} /> */}
 
       <div className="hours" ref={hourRef}></div>
 
