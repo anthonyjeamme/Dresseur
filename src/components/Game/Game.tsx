@@ -315,6 +315,36 @@ const Game = () => {
       return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
     }
 
+    centered(shadowCtx, () => {
+      shadowCtx.scale(1, 0.5)
+
+      const angle =
+        lastDirection.current === 3
+          ? 0
+          : lastDirection.current === 0
+          ? 1
+          : lastDirection.current === 2
+          ? 2
+          : 3
+      const rotation = (angle * Math.PI) / 2
+
+      shadowCtx.rotate(rotation)
+
+      var gradient = shadowCtx.createRadialGradient(20 + 20, 0, 20, 60, 0, 60)
+      gradient.addColorStop(0, `rgba(255,255,255,1)`)
+
+      for (var t = 0; t <= 1; t += 0.05) {
+        gradient.addColorStop(t, `rgba( 255,255,255, ${1 - easeInOut(t) * 1})`)
+      }
+
+      gradient.addColorStop(1, `rgba(255,255,255, 0)`)
+      shadowCtx.fillStyle = gradient
+      shadowCtx.fillRect(-300, -300, 600, 600)
+
+      shadowCtx.rotate(-rotation)
+      shadowCtx.scale(1, 2)
+    })
+
     for (const light of lights) {
       // console.log(light)
 
@@ -328,23 +358,7 @@ const Game = () => {
             `rgba(${light.color.join(",")}, ${light.intensity})`
           )
 
-          // gradient.addColorStop(
-          //   0.3,
-          //   `rgba(${light.color.join(",")}, ${light.intensity / 2})`
-          // )
-
-          // gradient.addColorStop(
-          //   0.5,
-          //   `rgba(${light.color.join(",")}, ${light.intensity / 4})`
-          // )
-
-          // gradient.addColorStop(
-          //   0.6,
-          //   `rgba(${light.color.join(",")}, ${light.intensity / 8})`
-          // )
-
           for (var t = 0; t <= 1; t += 0.1) {
-            // convert linear t to "easing" t:
             gradient.addColorStop(
               t,
               `rgba( ${light.color.join(",")}, ${
@@ -482,16 +496,6 @@ const Game = () => {
 
     ctx.restore()
 
-    centered(ctx, () => {
-      ctx.fillStyle = "red"
-      ctx.fillRect(-6, -6, 12, 12)
-
-      positionTranslated(ctx, () => {
-        ctx.fillStyle = "red"
-        ctx.fillRect(-6, -6, 12, 12)
-      })
-    })
-
     window.requestAnimationFrame(gameLoop)
   }
 
@@ -547,21 +551,6 @@ const Game = () => {
       />
 
       <canvas ref={shadowCanvasRef} id="shadow-canvas" />
-
-      {/* <canvas
-        style={{
-          position: "fixed",
-          zIndex: 2,
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          // filter: "grayscale(80%)",
-          backgroundColor: "transparent",
-          backgroundImage:
-            "linear-gradient(to bottom, transparent 0%, black 100%)",
-        }}
-      /> */}
     </div>
   )
 }

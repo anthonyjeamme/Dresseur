@@ -37,7 +37,9 @@
     bottom: 0;
     height: 100%;
     width: 100%;
+
     mix-blend-mode: multiply;
+
     background: #eeeeee;
     image-rendering: optimizeSpeed; /* STOP SMOOTHING, GIVE ME SPEED  */
     image-rendering: -moz-crisp-edges; /* Firefox                        */
