@@ -72,7 +72,7 @@ const getGameTime = () => {
 
   return {
     h: Math.floor(dayTime / 60),
-    m: Math.round(dayTime % 60),
+    m: Math.max(0, Math.round(dayTime % 59)),
   }
 }
 
@@ -156,6 +156,8 @@ const Game = () => {
 
   const timeLoop = () => {
     const { h, m } = getGameTime()
+
+    console.log(m)
 
     hourRef.current.innerHTML = `${`0${h}`.slice(-2)}h${`0${m}`.slice(-2)}`
   }
