@@ -63,6 +63,19 @@ const getBetweenColor = ([r1, g1, b1], [r2, g2, b2], ratio) => [
   Math.round(getBetweenNumber(b1, b2, ratio)),
 ]
 
+const getGameTime = () => {
+  const position =
+    new Date().getTime() / 1000 / 60 -
+    Math.floor(new Date().getTime() / 1000 / 60)
+
+  const dayTime = position * 60 * 24
+
+  return {
+    h: Math.floor(dayTime / 60),
+    m: Math.round(dayTime % 60),
+  }
+}
+
 const getColorFromGradient = (gradient, position) => {
   if (position < 0 || position > 1) throw `Out of gradient range`
 
@@ -107,7 +120,7 @@ const Game = () => {
 
   const currentZoom = useRef(ZOOM)
 
-  const timeRef = useRef({ h: 1 })
+  const timeRef = useRef(getGameTime())
   const hourRef = useRef<HTMLDivElement>()
 
   const lastDirection = useRef(0)
@@ -142,17 +155,16 @@ const Game = () => {
   }
 
   const timeLoop = () => {
-    timeRef.current.h = (timeRef.current.h + 1) % 24
-    hourRef.current.innerHTML = `${timeRef.current.h}h00`
+    const { h, m } = getGameTime()
+
+    hourRef.current.innerHTML = `${`0${h}`.slice(-2)}h${`0${m}`.slice(-2)}`
   }
 
   useEffect(() => {
     gameLoop()
     // const interval = setInterval(gameLoop, 20)
-    const hourInterval = setInterval(timeLoop, 600)
     return () => {
       // clearInterval(interval)
-      clearInterval(hourInterval)
     }
   }, [])
 
@@ -240,14 +252,14 @@ const Game = () => {
 
     const shadowCtx = shadowCanvasRef.current.getContext("2d")
 
+    timeLoop()
+
     const getDayColor = () => {
       const position =
         new Date().getTime() / 1000 / 60 -
         Math.floor(new Date().getTime() / 1000 / 60)
 
       const ambianceColor = getColorFromGradient(gradient, position)
-
-      console.log(ambianceColor)
 
       return `rgba(${ambianceColor.join(",")})`
     }
