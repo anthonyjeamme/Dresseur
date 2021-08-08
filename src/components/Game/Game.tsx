@@ -570,6 +570,9 @@ const Game = () => {
       <div className="mobile-buttons">
         <div>
           <button
+            onContextMenu={e => {
+              e.preventDefault()
+            }}
             onTouchStart={() => {
               mobileButtonRef.current.u = true
             }}
@@ -582,6 +585,9 @@ const Game = () => {
         </div>
         <div>
           <button
+            onContextMenu={e => {
+              e.preventDefault()
+            }}
             onTouchStart={() => {
               mobileButtonRef.current.l = true
             }}
@@ -592,6 +598,9 @@ const Game = () => {
             L
           </button>
           <button
+            onContextMenu={e => {
+              e.preventDefault()
+            }}
             onTouchStart={() => {
               mobileButtonRef.current.d = true
             }}
@@ -602,6 +611,9 @@ const Game = () => {
             D
           </button>
           <button
+            onContextMenu={e => {
+              e.preventDefault()
+            }}
             onTouchStart={() => {
               mobileButtonRef.current.r = true
             }}
