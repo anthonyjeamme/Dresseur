@@ -59,6 +59,33 @@ export const renderMap = (ctx: CanvasRenderingContext2D, map: Tile[][]) => {
   }
 }
 
+export const renderObjects = (ctx: CanvasRenderingContext2D, objects) => {
+  // console.log(objects)
+
+  const sorted = objects.sort((a, b) => a.position.y - b.position.y)
+
+  for (const object of sorted) {
+    ctx.translate(-32, -32 * 3)
+
+    ctx.fillStyle = "rgba(25, 12, 70, 0.25)"
+    ctx.scale(1, 0.5)
+    ctx.beginPath()
+    ctx.arc(
+      object.position.x + 32,
+      object.position.y * 2 + 32 * 3 * 2 - 4,
+      16,
+      0,
+      2 * Math.PI
+    )
+    ctx.fill()
+    ctx.scale(1, 2)
+
+    renderTile(ctx, object.tile, object.position, { h: 32 * 3, w: 32 * 2 })
+
+    ctx.translate(32, 32 * 3)
+  }
+}
+
 export const renderTileMap = (
   ctx: CanvasRenderingContext2D,
   map: { cells: { base: Tile; over: Tile[] }[] }[]
@@ -87,7 +114,8 @@ export const renderTileMap = (
 export const renderTile = (
   ctx: CanvasRenderingContext2D,
   tile: Tile,
-  position: TPosition
+  position: TPosition,
+  size = { h: 32, w: 32 }
 ) => {
   const frame =
     Math.round(new Date().getTime() / tile.getAnimationProps().frameDuration) %
@@ -98,7 +126,7 @@ export const renderTile = (
     ...tile.getFrame(frame).coords.get(),
     position.x,
     position.y,
-    32,
-    32
+    size.w,
+    size.h
   )
 }

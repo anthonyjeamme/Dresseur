@@ -134,6 +134,10 @@ export const _loadSector = async (id: string, resources): Promise<any> => {
     sector: {
       ...sector,
       map: {
+        objects: sector.map.objects.map(({ position, tile }) => ({
+          position,
+          tile: dependencies.tileSets[tile.tileSet].getTile(tile.tile),
+        })),
         tileMap: sector.map.tileMap.map(line => ({
           cells: line.cells.map(({ tile, tileSet, base, over }) => {
             return {

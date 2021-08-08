@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react"
 import {
   render,
   renderMap,
+  renderObjects,
   renderTileMap,
 } from "../../gameEngine/graphicEngine/graphicEngine"
 import { useResourceLoader } from "../../gameEngine/loader/loader"
@@ -88,7 +89,7 @@ const Game = () => {
   const recomputePosition = () => {
     const nextPosition = { x: positionRef.current.x, y: positionRef.current.y }
 
-    const MAX_SPEED = 2
+    const MAX_SPEED = 2.5
     const speed = 10
 
     if (keyboard.isActive("ACTION_GO_UP")) {
@@ -187,6 +188,12 @@ const Game = () => {
         )
 
         renderTileMap(ctx, sector.map.tileMap)
+        renderObjects(
+          ctx,
+          sector.map.objects.filter(
+            ({ position }) => position.y < positionRef.current.y
+          )
+        )
 
         ctx.translate(
           -sector.globalPosition.x * 32 * 32,
@@ -237,7 +244,42 @@ const Game = () => {
       -Math.round(canvasRef.current.height / 2)
     )
 
-    // ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+    ctx.translate(-positionRef.current.x, -positionRef.current.y)
+
+    ctx.translate(
+      Math.round(canvasRef.current.width / 2),
+      Math.round(canvasRef.current.height / 2)
+    )
+
+    for (const sectorId of sectors) {
+      const sector = gameResources.getSector(sectorId)
+
+      if (sector) {
+        ctx.translate(
+          sector.globalPosition.x * 32 * 32,
+          sector.globalPosition.y * 32 * 32
+        )
+
+        renderObjects(
+          ctx,
+          sector.map.objects.filter(
+            ({ position }) => position.y >= positionRef.current.y
+          )
+        )
+
+        ctx.translate(
+          -sector.globalPosition.x * 32 * 32,
+          -sector.globalPosition.y * 32 * 32
+        )
+      }
+    }
+
+    ctx.translate(
+      -Math.round(canvasRef.current.width / 2),
+      -Math.round(canvasRef.current.height / 2)
+    )
+
+    ctx.translate(positionRef.current.x, positionRef.current.y)
 
     ctx.restore()
   }

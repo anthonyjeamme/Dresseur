@@ -397,7 +397,7 @@ const DisplayTile = ({
   console.log(tile)
   return (
     <div className="DisplayTile" role="button" onClick={handleClick}>
-      {/* {tile.getId()} */}
+      {tile.getId()}
       {/* {tile.walkable ? " WW" : ""} */}
       {/* {tile.over ? "OVER" : ""} */}
       <canvas
