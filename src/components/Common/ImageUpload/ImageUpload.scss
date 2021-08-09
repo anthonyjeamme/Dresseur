@@ -1,0 +1,16 @@
+.ImageUpload {
+  display: flex;
+
+  & > input {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  & > button {
+    max-width: 280px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

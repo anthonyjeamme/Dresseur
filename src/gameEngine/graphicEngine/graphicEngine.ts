@@ -23,7 +23,7 @@ export const render = (
   ctx.translate(-window.innerWidth / 8, -window.innerHeight / 8)
 }
 
-const drawTile = (
+export const drawTile = (
   tile: Tile,
   position: TPosition,
   name: string,

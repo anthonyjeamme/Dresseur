@@ -22,6 +22,29 @@ export class Tile {
     this.#tileset = tileset
   }
 
+  getFrames() {
+    return this.#frames
+  }
+
+  cleanFrames() {
+    this.#frames = []
+    console.log("CLEANED")
+  }
+
+  updateFrame(index: number, coords: TileCoords) {
+    if (index >= this.#frames.length) throw `updateFrame error : overflow`
+
+    this.#frames[index].coords = coords
+  }
+
+  setFrames(coords: TileCoords[]) {
+    this.#frames = coords.map(coords => ({ coords }))
+  }
+
+  pushFrame(coords: TileCoords) {
+    this.#frames.push({ coords })
+  }
+
   getId() {
     return this.#id
   }
@@ -50,6 +73,20 @@ export class Tile {
       tile: this.#id,
       tileSet: this.#tileset.id,
     }
+  }
+
+  toJSON() {
+    return {
+      id: this.#id,
+      animation: this.#animation,
+      frames: this.#frames,
+      over: this.over,
+      walkable: this.walkable,
+    }
+  }
+
+  clone() {
+    return new Tile(this.toJSON(), this.#tileset)
   }
 }
 

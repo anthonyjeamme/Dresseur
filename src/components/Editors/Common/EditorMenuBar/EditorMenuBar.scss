@@ -1,0 +1,55 @@
+.EditorMenuBar {
+  background-color: #eeeeee;
+  padding: 0 9px;
+  display: flex;
+  border-bottom: 3px solid #bbbbbb;
+  font-size: 12px;
+
+  & > .EditorMenuItem {
+    position: relative;
+
+    & > button {
+      display: flex;
+      align-items: center;
+      padding: 9px 21px;
+      background-color: transparent;
+      border: 0;
+      cursor: pointer;
+      transition: background-color 200ms;
+
+      &:hover {
+        background-color: #dddddd;
+      }
+
+      .caret {
+        height: 6px;
+        width: 9px;
+        margin: auto 0 auto 6px;
+      }
+    }
+
+    & > .menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      border: 3px solid #bbbbbb;
+      left: 0;
+      min-width: 100%;
+      background-color: white;
+
+      &:not(.active) {
+        display: none;
+      }
+
+      & > .item {
+        cursor: pointer;
+        padding: 9px 21px;
+        white-space: nowrap;
+
+        transition: background-color 200ms;
+        &:hover {
+          background-color: #eeeeee;
+        }
+      }
+    }
+  }
+}

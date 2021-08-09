@@ -1,3 +1,4 @@
+import { loadTileSet } from "../../loader/loader"
 import { Tile } from "../Tile/Tile"
 
 export class TileSet {
@@ -33,5 +34,8 @@ export class TileSet {
       tile: this.title,
       tiles: this.tiles,
     }
+  }
+  async clone() {
+    return new TileSet(await loadTileSet(this.id))
   }
 }

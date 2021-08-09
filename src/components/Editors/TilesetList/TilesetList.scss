@@ -1,0 +1,51 @@
+.TilesetList {
+  max-width: 1000px;
+  margin: 40px auto;
+
+  h1 {
+    font-family: inherit;
+    font-size: 20px;
+  }
+
+  & > .list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+
+    & > .item {
+      border: 3px solid black;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      transition: transform 300ms, box-shadow 300ms;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      & > .image-container {
+        position: relative;
+        height: 200px;
+        & > img {
+          height: 200px;
+          width: 100%;
+          object-fit: cover;
+        }
+        border-bottom: 3px solid black;
+      }
+
+      & > .name {
+        flex: 1;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+        color: black;
+      }
+    }
+  }
+}

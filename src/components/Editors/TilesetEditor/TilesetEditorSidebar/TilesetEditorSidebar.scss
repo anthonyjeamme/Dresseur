@@ -1,0 +1,45 @@
+.TilesetEditorSidebar {
+  border-left: 3px solid #bbbbbb;
+  box-sizing: border-box;
+  padding: 18px;
+  width: 345px;
+
+  & > .tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+
+    & > .TileItem {
+      height: 96px;
+      width: 96px;
+      background-color: #eeeeee;
+      font-size: 7px;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+
+      & > canvas {
+        height: 96px;
+        width: 96px;
+        background-color: transparent;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        border: 3px solid transparent;
+        transition: border-color 200ms;
+      }
+
+      &.active {
+        &::after {
+          border-color: rgba(red, 0.5);
+        }
+      }
+    }
+  }
+}

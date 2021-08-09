@@ -1,4 +1,4 @@
-export const loadImage = (url: string) =>
+export const loadImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const image = document.createElement("img")
 

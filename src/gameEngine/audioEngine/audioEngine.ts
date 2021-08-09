@@ -5,7 +5,7 @@ export const useAudioEngine = () => {
 
   useEffect(() => {
     soundRef.current = loadSound("/audio/music1.mp3")
-    soundRef.current.play()
+    // soundRef.current.play()
 
     return () => {
       soundRef.current.pause()

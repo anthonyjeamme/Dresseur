@@ -2,9 +2,43 @@
 
 body {
   user-select: none;
+  font-size: 12px;
+}
+
+* {
+  font-family: "Press Start 2P", cursive;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Press Start 2P", cursive;
+}
+
+input {
+  border: 3px solid black;
+  padding: 6px 12px;
+  outline: none;
+}
+
+button {
+  border: 3px solid black;
+  padding: 6px 12px;
+  cursor: pointer;
+  outline: none;
 }
 
 canvas {
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+img {
   image-rendering: optimizeSpeed;
   image-rendering: -moz-crisp-edges;
   image-rendering: -o-crisp-edges;

@@ -178,10 +178,14 @@ export const loadSectorDependencies = async (sector: TSector, resources) => {
   }
 }
 
-export const loadTileSet = async id => {
-  const { imageUrl, title, tiles } = (
+export const loadTileSetData = async (id: string) => {
+  return (
     await firebase.firestore().collection("tilesets").doc(id).get()
   ).data()
+}
+
+export const loadTileSet = async (id: string) => {
+  const { imageUrl, title, tiles } = await loadTileSetData(id)
 
   const img = await loadImage(imageUrl)
 
