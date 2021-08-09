@@ -3,6 +3,8 @@
   box-sizing: border-box;
   padding: 18px;
   width: 345px;
+  max-height: calc(100vh - 47px);
+  overflow-y: auto;
 
   & > .tiles {
     display: grid;
