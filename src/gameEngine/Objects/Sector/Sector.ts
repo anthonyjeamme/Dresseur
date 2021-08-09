@@ -20,6 +20,10 @@ export class Sector {
       globalPosition: this.globalPosition,
       map: {
         ...this.map,
+        objects: this.map.objects.map(object => ({
+          ...object,
+          tile: object.tile.getPath(),
+        })),
         tileMap: this.map.tileMap.map(line => ({
           ...line,
           cells: line.cells.map(cell => ({

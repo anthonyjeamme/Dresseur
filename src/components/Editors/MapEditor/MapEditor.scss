@@ -27,6 +27,7 @@
       background-color: #eee;
       transform: translateX(350px);
       transition: transform 400ms;
+      overflow-y: auto;
 
       &.active {
         transform: none;
@@ -39,6 +40,7 @@
   }
 
   .tileset {
+    overflow-y: auto;
     & > .tiles {
       display: grid;
       grid-template-columns: repeat(4, 1fr);

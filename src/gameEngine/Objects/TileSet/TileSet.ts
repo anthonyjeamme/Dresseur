@@ -32,7 +32,15 @@ export class TileSet {
     return {
       imageUrl: this.img.src,
       tile: this.title,
-      tiles: this.tiles,
+      tiles: Object.keys(this.tiles)
+        .map(id => ({
+          id,
+          tile: this.tiles[id].toJSON(),
+        }))
+        .reduce((acc, cur) => {
+          acc[cur.id] = cur.tile
+          return acc
+        }, {}),
     }
   }
   async clone() {

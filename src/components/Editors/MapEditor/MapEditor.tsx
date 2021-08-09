@@ -394,7 +394,6 @@ const DisplayTile = ({
     // ctx.drawImage(tileSet.definition.img, ox, oy, ow, oh, 0, 0, 32, 32)
   }, [])
 
-  console.log(tile)
   return (
     <div className="DisplayTile" role="button" onClick={handleClick}>
       {tile.getId()}

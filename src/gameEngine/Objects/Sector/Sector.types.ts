@@ -5,4 +5,5 @@ export type TSector = {
   dependencies: {
     tileSets: string[]
   }
+  toJSON: () => any
 }
