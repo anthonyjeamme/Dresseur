@@ -1,0 +1,28 @@
+.GameRenderer {
+  #base-canvas,
+  #shadow-canvas,
+  #game-ui,
+  #overlay-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #base-canvas {
+    z-index: 2;
+  }
+
+  #shadow-canvas {
+    z-index: 2;
+  }
+
+  #game-ui {
+    z-index: 3;
+  }
+
+  #overlay-canvas {
+    z-index: 4;
+  }
+}

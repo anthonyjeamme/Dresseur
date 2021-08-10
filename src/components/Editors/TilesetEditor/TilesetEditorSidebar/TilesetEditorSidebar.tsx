@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
-import { drawTile } from "../../../../gameEngine/graphicEngine/graphicEngine"
 import { Tile } from "../../../../gameEngine/Objects/Tile/Tile"
 import { TileSet } from "../../../../gameEngine/Objects/TileSet/TileSet"
 import useIsMounted from "../../../../utils/useIsMounted"
 import useRefresh from "../../../utils/hooks/useRefresh"
 import { useTileSetEditorContext } from "../TilesetEditor"
+import TileParams from "./TileParams/TileParams"
 
 import "./TilesetEditorSidebar.scss"
 
@@ -24,34 +24,11 @@ const TilesetEditorSidebar = ({
   return (
     <div className="TilesetEditorSidebar">
       {selectedTile && (
-        <div>
-          <div>props de la tile</div>
-          <div>
-            <input
-              type="checkbox"
-              checked={tileset.tiles[selectedTile].walkable}
-              onClick={() => {
-                tileset.tiles[selectedTile].walkable =
-                  !tileset.tiles[selectedTile].walkable
-
-                refresh()
-              }}
-            />{" "}
-            Walkable
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              checked={tileset.tiles[selectedTile].over}
-              onClick={() => {
-                tileset.tiles[selectedTile].over =
-                  !tileset.tiles[selectedTile].over
-                refresh()
-              }}
-            />{" "}
-            over
-          </div>
-        </div>
+        <TileParams
+          tile={tileset.tiles[selectedTile]}
+          refresh={refresh}
+          key={selectedTile}
+        />
       )}
 
       <div className="tiles">

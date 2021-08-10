@@ -1,0 +1,35 @@
+.TileParams {
+  position: fixed;
+  left: 21px;
+  bottom: 21px;
+  padding: 12px;
+  background-color: white;
+  z-index: 2;
+  width: 300px;
+
+  [role="button"] {
+    cursor: pointer;
+    transition: background-color 200ms;
+
+    &:hover {
+      background-color: #eeeeee;
+    }
+  }
+
+  h2 {
+    font-size: 12px;
+    text-decoration: underline;
+    font-family: inherit;
+    margin: 0 0 21px 0;
+  }
+
+  section {
+    & > h3 {
+      font-family: inherit;
+      font-size: 12px;
+      margin: 0 0 9px 0;
+    }
+
+    margin-bottom: 21px;
+  }
+}

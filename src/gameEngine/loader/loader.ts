@@ -67,6 +67,10 @@ export const useResourceLoader = () => {
   }
 
   const getTile = (tileSetId: string, tileId: string) => {
+    if (!resourcesRef.current.tileSets[tileSetId]) {
+      console.log("CANT FINd", tileSetId)
+    }
+
     return resourcesRef.current.tileSets[tileSetId].getTile(tileId)
   }
 
@@ -186,6 +190,8 @@ export const loadTileSetData = async (id: string) => {
 
 export const loadTileSet = async (id: string) => {
   const { imageUrl, title, tiles } = await loadTileSetData(id)
+
+  console.log("load", id)
 
   const img = await loadImage(imageUrl)
 

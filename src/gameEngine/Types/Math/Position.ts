@@ -7,3 +7,5 @@ export type TSize = {
   height: number
   width: number
 }
+
+export type TArea = TPosition & TSize

@@ -3,6 +3,11 @@
 body {
   user-select: none;
   font-size: 12px;
+  overflow-y: hidden;
+}
+
+html {
+  overflow-y: hidden !important;
 }
 
 * {
@@ -15,10 +20,15 @@ h3 {
   font-family: "Press Start 2P", cursive;
 }
 
-input {
+input,
+select {
   border: 3px solid black;
   padding: 6px 12px;
   outline: none;
+}
+
+select {
+  cursor: pointer;
 }
 
 button {
