@@ -1,5 +1,4 @@
 import { useGameContext } from "../../components/Game/GameContext/GameContext"
-import { TResourceLoaderContext } from "../loader/loader"
 import { renderTileMap } from "./graphicEngine"
 import {
   centerCanvas,

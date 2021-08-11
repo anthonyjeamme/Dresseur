@@ -17,6 +17,8 @@ export const useResourceLoader = (): TResourceLoaderContext => {
     tileSets: {},
   })
 
+  const currentMapIdRef = useRef<string>(null)
+
   const loadingList = useRef<string[]>([])
 
   const mapRef = useRef<any>()
@@ -27,6 +29,7 @@ export const useResourceLoader = (): TResourceLoaderContext => {
 
   const loadSector = async (position: TPosition) => {
     if (!mapRef.current) return
+
     const findSector = mapRef.current.sectors.find(sector =>
       positionAreEqual(sector.position, position)
     )
@@ -103,12 +106,21 @@ export const useResourceLoader = (): TResourceLoaderContext => {
       await firebase.firestore().collection("maps").doc(mapId).get()
     ).data()
 
+    currentMapIdRef.current = mapId
+
+    console.log("MAP LOADED", map.name)
+    sectorsRef.current = {}
     mapRef.current = map
+  }
+
+  const getCurrentMapId = () => {
+    return currentMapIdRef.current
   }
 
   return {
     loadMap,
     getSectorIds,
+    getCurrentMapId,
     getTile,
     freeSector,
     loadSector,
@@ -120,6 +132,7 @@ export const useResourceLoader = (): TResourceLoaderContext => {
 
 export type TResourceLoaderContext = {
   loadMap: any
+  getCurrentMapId: any
   getSectorIds: any
   getTile: any
   freeSector: any

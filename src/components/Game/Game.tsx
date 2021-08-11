@@ -12,7 +12,6 @@ import { GameContextProvider, useGameContext } from "./GameContext/GameContext"
 
 import { useUserInteractions } from "../../gameEngine/io/useUserInteractions"
 
-import { useResourceLoader } from "../../gameEngine/loader/loader"
 import "./Game.scss"
 
 const Game = () => {
@@ -41,7 +40,6 @@ const Game = () => {
   const load = async () => {
     await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
     await gameContext.gameResources.loadSector({ x: 0, y: 0 })
-    await gameContext.gameResources.loadSector({ x: 10, y: 10 })
   }
 
   useEffect(() => {
@@ -51,15 +49,21 @@ const Game = () => {
   useEffect(() => {
     const handleInteraction = () => {
       changeZone(async () => {
-        if (gameContext.playerState.get().location.position.x > 32 * 32 * 5) {
-          gameContext.setPlayerPositionTo("aaaaaa", {
+        if (
+          gameContext.gameResources.getCurrentMapId() === "05DGp5hRkJZvaMp4MCoT"
+        ) {
+          await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoU")
+          await gameContext.gameResources.loadSector({ x: 0, y: 0 })
+          gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
             x: 32,
             y: 32,
           })
         } else {
-          gameContext.setPlayerPositionTo("aaaaaa", {
-            x: 10 * 32 * 32 + 64,
-            y: 10 * 32 * 32 + 64,
+          await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
+          await gameContext.gameResources.loadSector({ x: 0, y: 0 })
+          gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
+            x: 32,
+            y: 32,
           })
         }
       })
