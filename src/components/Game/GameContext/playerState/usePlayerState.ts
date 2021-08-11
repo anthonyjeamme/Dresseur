@@ -23,6 +23,7 @@ export type TPlayerState = {
   }
   pokemons: TPokemon[]
   pokedex: TPokedex
+  movementDisabled?: boolean
   location: {
     map: string
     position: TPosition

@@ -9,13 +9,16 @@ export const openEffect: TEffectRenderer = (ctx, ratio, { height, width }) => {
 
   if (circleSize === 0) {
     ctx.fillStyle = "black"
-    ctx.fillRect(-height, -height, height * 2, width * 2)
+    ctx.fillRect(0, 0, width, height)
     return
   }
 
-  var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, circleSize)
+  const x = Math.round(width / 2)
+  const y = Math.round(height / 2)
+
+  var gradient = ctx.createRadialGradient(x, y, 0, x, y, circleSize)
   gradient.addColorStop(1, "transparent")
   gradient.addColorStop(1, "black")
   ctx.fillStyle = gradient
-  ctx.fillRect(-Math.ceil(width / 2), -Math.ceil(height / 2), width, height)
+  ctx.fillRect(0, 0, width, height)
 }

@@ -11,38 +11,61 @@ import GameRenderer from "./GameRenderer/GameRenderer"
 import { GameContextProvider, useGameContext } from "./GameContext/GameContext"
 import { timeout } from "../utils/time"
 
+import { useUserInteractions } from "../../gameEngine/io/useUserInteractions"
+
 import "./Game.scss"
+import { useResourceLoader } from "../../gameEngine/loader/loader"
 
 const Game = () => {
   const loopIdRef = useRef(null)
 
   const gameContext = useGameContext()
 
+  const userInteractions = useUserInteractions()
   const graphicEngine = useGraphicEngine()
-  const physicsEngine = usePhysicsEngine()
+  const physicsEngine = usePhysicsEngine(userInteractions)
+
+  const gameResources = useResourceLoader()
 
   const isMounted = useIsMounted()
 
-  const transferEffect = async (promise: Promise<any>) => {
-    await gameContext.overlayEffect.play("close")
-    await promise
-    await gameContext.overlayEffect.play("open")
+  const changeZone = async change => {
+    try {
+      gameContext.playerState.get().movementDisabled = true
+      await gameContext.overlayEffect.play("close", 400)
+      await change()
+      await gameContext.overlayEffect.play("open", 400)
+      gameContext.playerState.get().movementDisabled = false
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const load = async () => {
+    await gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
+    await gameResources.loadSector({ x: 0, y: 0 })
   }
 
   useEffect(() => {
-    const handleKeyPress = e => {
-      if (e.key === "o") {
-      } else if (e.key === "c") {
-        transferEffect(timeout(1000)).catch(err => {
-          console.log(err)
+    load()
+  }, [])
+
+  useEffect(() => {
+    const handleInteraction = () => {
+      changeZone(async () => {
+        gameContext.setPlayerPositionTo("", {
+          x: 0,
+          y: 0,
         })
-      }
+      })
+
+      // transferEffect(timeout(1000))
     }
 
-    window.addEventListener("keypress", handleKeyPress)
+    userInteractions.addEventListener("interact", handleInteraction)
 
     return () => {
-      window.removeEventListener("keypress", handleKeyPress)
+      userInteractions.removeEventListener("interact", handleInteraction)
     }
   }, [])
 
@@ -51,12 +74,18 @@ const Game = () => {
     gameLoop(loopIdRef.current)
   }, [])
 
-  const gameLoop = (loopId: string) => {
+  const gameLoop = async (loopId: string) => {
     if (!isMounted()) return
-    if (loopIdRef.current !== loopId) return
+    if (loopIdRef.current !== loopId) {
+      return
+    }
 
-    graphicEngine.render()
+    graphicEngine.render(gameResources)
     physicsEngine.executeLoop()
+
+    if (userInteractions.isActive("up")) {
+      console.log("UP")
+    }
 
     window.requestAnimationFrame(() => {
       gameLoop(loopId)

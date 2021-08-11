@@ -7,15 +7,22 @@ export const closeEffect: TEffectRenderer = (ctx, ratio, { height, width }) => {
     (1 - easeInOut(ratio)) * Math.max(height / 2, width / 2) * 1.42
   )
 
+  ctx.save()
+
   if (circleSize === 0) {
     ctx.fillStyle = "black"
-    ctx.fillRect(-height, -height, height * 2, width * 2)
+    ctx.fillRect(0, 0, width, height)
     return
   }
 
-  var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, circleSize)
+  const x = Math.round(width / 2)
+  const y = Math.round(height / 2)
+
+  var gradient = ctx.createRadialGradient(x, y, 0, x, y, circleSize)
   gradient.addColorStop(1, "transparent")
   gradient.addColorStop(1, "black")
   ctx.fillStyle = gradient
-  ctx.fillRect(-Math.ceil(width / 2), -Math.ceil(height / 2), width, height)
+  ctx.fillRect(0, 0, width, height)
+
+  ctx.restore()
 }

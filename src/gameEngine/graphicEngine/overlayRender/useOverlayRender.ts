@@ -1,13 +1,11 @@
 import { useGameContext } from "../../../components/Game/GameContext/GameContext"
 import { now } from "../../../components/utils/time"
 import { TSize } from "../../Types/Math/Position"
-import {
-  centerCanvas,
-  getCanvasSize,
-  getRendererCtx,
-} from "../graphicEngine.utils"
+import { getCanvasSize, getRendererCtx } from "../graphicEngine.utils"
 import { TRendererReferences } from "../utils/useRenderedReferences"
 import { closeEffect } from "./effects/close.effect"
+import { fadeinEffect } from "./effects/fadein.effect"
+import { fadeoutEffect } from "./effects/fadeout.effect"
 import { openEffect } from "./effects/open.effect"
 
 export const useOverlayRender = (renderers: TRendererReferences) => {
@@ -31,21 +29,23 @@ export const useOverlayRender = (renderers: TRendererReferences) => {
 
     if (ratio >= 1) effect.state = "finished"
 
-    centerCanvas(renderer, ctx, () => {
-      try {
-        effects[effect.name](ctx, ratio, { height, width })
-      } catch (err) {
-        console.log(
-          `[OVERLAY EFFECT] an error occured when rendering effect : `,
-          err
-        )
-      }
-    })
+    ctx.clearRect(0, 0, width, height)
+
+    try {
+      effects[effect.name](ctx, ratio, { height, width })
+    } catch (err) {
+      console.log(
+        `[OVERLAY EFFECT] an error occured when rendering effect : `,
+        err
+      )
+    }
   }
 
   const effects = {
     open: openEffect,
     close: closeEffect,
+    fadein: fadeinEffect,
+    fadeout: fadeoutEffect,
   }
 
   return { render }

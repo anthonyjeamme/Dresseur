@@ -11,7 +11,7 @@ import { TileSet } from "../Objects/TileSet/TileSet"
 import { TPosition } from "../Types/Math/Position"
 import { loadImage } from "./loader.utils"
 
-export const useResourceLoader = () => {
+export const useResourceLoader = (): TResourceLoaderContext => {
   const sectorsRef = useRef<{ [id: string]: TSector }>({})
   const resourcesRef = useRef<any>({
     tileSets: {},
@@ -116,6 +116,17 @@ export const useResourceLoader = () => {
     getResources,
     getSectorFromCoords,
   }
+}
+
+export type TResourceLoaderContext = {
+  loadMap: any
+  getSectorIds: any
+  getTile: any
+  freeSector: any
+  loadSector: any
+  getSector: any
+  getResources: any
+  getSectorFromCoords: any
 }
 
 export const _loadSector = async (id: string, resources): Promise<any> => {

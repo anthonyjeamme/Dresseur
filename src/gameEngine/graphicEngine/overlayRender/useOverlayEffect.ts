@@ -13,13 +13,11 @@ export const useOverlayEffect = (): TOverlayHook => {
     }
   }
 
-  const play = async (name: "open" | "close") => {
+  const play = async (name: TOverlayEffectType, duration: number = 1000) => {
     if (getCurrentOverlayOffect()?.state === "running") {
       throw `already running an effect`
       return
     }
-
-    const duration = 1000
 
     setCurrentOverlayOffect({
       name,
@@ -41,10 +39,12 @@ export const useOverlayEffect = (): TOverlayHook => {
 }
 
 export type TOverlayHook = {
-  play: (name: "open" | "close") => Promise<void>
+  play: (name: TOverlayEffectType, duration?: number) => Promise<void>
   getCurrentOverlayOffect: () => TOverlayEffect
   setCurrentOverlayOffect: (effect: TOverlayEffect) => void
 }
+
+export type TOverlayEffectType = "open" | "close" | "fadein" | "fadeout"
 
 export type TOverlayEffect = {
   name: string
