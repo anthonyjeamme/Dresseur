@@ -13,6 +13,7 @@ import { GameContextProvider, useGameContext } from "./GameContext/GameContext"
 import { useUserInteractions } from "../../gameEngine/io/useUserInteractions"
 
 import "./Game.scss"
+import MobileButtons from "../Common/MobileButtons/MobileButtons"
 
 const Game = () => {
   const loopIdRef = useRef(null)
@@ -120,6 +121,7 @@ const Game = () => {
   return (
     <div className="Game">
       <GameRenderer graphicEngine={graphicEngine} />
+      <MobileButtons />
     </div>
   )
 }

@@ -14,8 +14,13 @@ export const useUserInteractions = (
   const keyboard = useKeyboard(inputUserConfiguration.keyboard)
   const gamepad = useGamepad(inputUserConfiguration.gamepad)
 
-  const isActive = (userAction: TUserAction) =>
+  const isActive = (userAction: TUserAction) => {
+    const mobileInput = document.getElementById("mobile-buttons-current")
+
+    if (mobileInput && mobileInput.value === userAction) return true
+
     keyboard.isActive(userAction) || gamepad.isActive(userAction)
+  }
 
   const addEventListener: TInteractionAddEventListener = (...props) => {
     keyboard.addEventListener(...props)
