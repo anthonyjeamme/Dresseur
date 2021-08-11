@@ -14,12 +14,12 @@ export const useGraphicEngine = (): TGraphicEngine => {
   const renderers = useRendererReferences()
   const overlayRender = useOverlayRender(renderers)
 
-  const render = gameResources => {
+  const render = () => {
     if (!canDraw()) return
 
     clearRenderers()
 
-    const sectors = gameResources.getSectorIds()
+    const sectors = gameContext.gameResources.getSectorIds()
 
     const ctx = renderers.baseCanvasRef.current.getContext("2d")
 
@@ -30,7 +30,7 @@ export const useGraphicEngine = (): TGraphicEngine => {
       ctx.translate(-x, -y)
 
       for (const sectorId of sectors) {
-        const sector = gameResources.getSector(sectorId)
+        const sector = gameContext.gameResources.getSector(sectorId)
 
         // console.log(sectorId)
 
@@ -91,5 +91,5 @@ export type TGraphicEngine = {
     shadowCanvasRef: React.MutableRefObject<HTMLCanvasElement>
     overlayCanvasRef: React.MutableRefObject<HTMLCanvasElement>
   }
-  render: (gameResources: TResourceLoaderContext) => void
+  render: () => void
 }

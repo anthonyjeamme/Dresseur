@@ -24,8 +24,6 @@ const Game = () => {
   const graphicEngine = useGraphicEngine()
   const physicsEngine = usePhysicsEngine(userInteractions)
 
-  const gameResources = useResourceLoader()
-
   const isMounted = useIsMounted()
 
   const changeZone = async change => {
@@ -41,9 +39,9 @@ const Game = () => {
   }
 
   const load = async () => {
-    await gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
-    await gameResources.loadSector({ x: 0, y: 0 })
-    await gameResources.loadSector({ x: 10, y: 10 })
+    await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
+    await gameContext.gameResources.loadSector({ x: 0, y: 0 })
+    await gameContext.gameResources.loadSector({ x: 10, y: 10 })
   }
 
   useEffect(() => {
@@ -53,8 +51,6 @@ const Game = () => {
   useEffect(() => {
     const handleInteraction = () => {
       changeZone(async () => {
-        await gameResources.loadMap("aaaaaa")
-
         if (gameContext.playerState.get().location.position.x > 32 * 32 * 5) {
           gameContext.setPlayerPositionTo("aaaaaa", {
             x: 32,
@@ -87,7 +83,7 @@ const Game = () => {
       return
     }
 
-    graphicEngine.render(gameResources)
+    graphicEngine.render()
     physicsEngine.executeLoop()
 
     window.requestAnimationFrame(() => {

@@ -3,6 +3,10 @@ import {
   TOverlayHook,
   useOverlayEffect,
 } from "../../../gameEngine/graphicEngine/overlayRender/useOverlayEffect"
+import {
+  TResourceLoaderContext,
+  useResourceLoader,
+} from "../../../gameEngine/loader/loader"
 import { TPosition } from "../../../gameEngine/Types/Math/Position"
 import { TPlayerStateHook, usePlayerState } from "./playerState/usePlayerState"
 
@@ -13,6 +17,7 @@ export const useGameContext = () => React.useContext<TGameContext>(gameContext)
 export const GameContextProvider = ({ children }) => {
   const overlayEffect = useOverlayEffect()
   const playerState = usePlayerState(initialState)
+  const gameResources = useResourceLoader()
 
   const setPlayerPositionTo = (map: string, position: TPosition) => {
     // LOAD
@@ -25,7 +30,7 @@ export const GameContextProvider = ({ children }) => {
 
   return (
     <gameContext.Provider
-      value={{ overlayEffect, playerState, setPlayerPositionTo }}
+      value={{ overlayEffect, playerState, setPlayerPositionTo, gameResources }}
     >
       {children}
     </gameContext.Provider>
@@ -36,6 +41,7 @@ type TGameContext = {
   overlayEffect: TOverlayHook
   playerState: TPlayerStateHook
   setPlayerPositionTo: (mapId: string, position: TPosition) => void
+  gameResources: TResourceLoaderContext
 }
 
 const initialState = {
