@@ -45,10 +45,13 @@ type TGameContext = {
 }
 
 const initialState = {
+  physics: {
+    direction: "bottom",
+  },
   location: {
     position: {
-      x: 0,
-      y: 0,
+      x: 32 * 17 + 16,
+      y: 32 * 19,
     },
   },
 }

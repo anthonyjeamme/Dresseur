@@ -17,6 +17,11 @@ export type TPlayerStateHook = {
 }
 
 export type TPlayerState = {
+  physics: {
+    direction: "left" | "right" | "up" | "down"
+    walking: boolean
+  }
+
   bag: {
     size: number
     items: TGameItem[]

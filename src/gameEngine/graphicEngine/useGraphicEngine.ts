@@ -5,6 +5,7 @@ import {
   getRendererCtx,
   getRendererSize,
 } from "./graphicEngine.utils"
+
 import { useOverlayRender } from "./overlayRender/useOverlayRender"
 import { useRendererReferences } from "./utils/useRenderedReferences"
 
@@ -53,7 +54,35 @@ export const useGraphicEngine = (): TGraphicEngine => {
 
       ctx.fillStyle = "red"
 
-      ctx.fillRect(-2, -2, 4, 4)
+      const { direction, walking } = gameContext.playerState.get().physics
+
+      const iDirection =
+        direction === "down"
+          ? 0
+          : direction === "up"
+          ? 1
+          : direction === "left"
+          ? 2
+          : 3
+
+      const frame = Math.round(new Date().getTime() / 60) % 6
+
+      ctx.drawImage(
+        gameContext.gameResources.getPlayerImage(),
+
+        walking ? 30 * frame : 0,
+
+        //   (keyboard.isActive("ACTION_GO_DOWN") ? 60 : 0) + 60 * frame,
+        // lastDirection.current
+
+        iDirection * 60,
+        30,
+        60,
+        -15,
+        -60,
+        30,
+        60
+      )
     })
 
     overlayRender.render()

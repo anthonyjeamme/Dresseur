@@ -18,10 +18,14 @@ export const useResourceLoader = (): TResourceLoaderContext => {
   })
 
   const currentMapIdRef = useRef<string>(null)
-
   const loadingList = useRef<string[]>([])
-
   const mapRef = useRef<any>()
+  const playerImageRef = useRef<HTMLImageElement>()
+
+  const loadPlayerImage = async () => {
+    playerImageRef.current = await loadImage("/images/joe.png")
+    console.log("Image loaded", playerImageRef.current)
+  }
 
   const freeSector = async (id: string) => {
     sectorsRef.current[id] = undefined
@@ -117,7 +121,13 @@ export const useResourceLoader = (): TResourceLoaderContext => {
     return currentMapIdRef.current
   }
 
+  const getPlayerImage = () => {
+    return playerImageRef.current
+  }
+
   return {
+    getPlayerImage,
+    loadPlayerImage,
     loadMap,
     getSectorIds,
     getCurrentMapId,
@@ -131,6 +141,8 @@ export const useResourceLoader = (): TResourceLoaderContext => {
 }
 
 export type TResourceLoaderContext = {
+  loadPlayerImage: any
+  getPlayerImage: any
   loadMap: any
   getCurrentMapId: any
   getSectorIds: any

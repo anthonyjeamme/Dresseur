@@ -266,7 +266,7 @@ const MapEditor = ({}) => {
     const x = position.x - sector.globalPosition.x * 32
     const y = position.y - sector.globalPosition.y * 32
 
-    if (gameResources.getTile(tileSet, tile).over) {
+    if (gameResources.getTile(tileSet, tile).type === "over") {
       const list = sector.map.tileMap[y].cells[x].over.map(over =>
         over.getPath()
       )

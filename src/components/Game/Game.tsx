@@ -21,9 +21,32 @@ const Game = () => {
 
   const userInteractions = useUserInteractions()
   const graphicEngine = useGraphicEngine()
-  const physicsEngine = usePhysicsEngine(userInteractions)
+  const physicsEngine = usePhysicsEngine(userInteractions, handleTrigger)
 
   const isMounted = useIsMounted()
+
+  function handleTrigger() {
+    changeZone(async () => {
+      console.log(gameContext.gameResources.getCurrentMapId())
+      if (
+        gameContext.gameResources.getCurrentMapId() === "05DGp5hRkJZvaMp4MCoT"
+      ) {
+        await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoU")
+        await gameContext.gameResources.loadSector({ x: 0, y: 0 })
+        gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
+          x: 32,
+          y: 32,
+        })
+      } else {
+        // await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
+        // await gameContext.gameResources.loadSector({ x: 0, y: 0 })
+        // gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
+        //   x: 32,
+        //   y: 32,
+        // })
+      }
+    })
+  }
 
   const changeZone = async change => {
     try {
@@ -38,12 +61,16 @@ const Game = () => {
   }
 
   const load = async () => {
+    await gameContext.gameResources.loadPlayerImage()
     await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
     await gameContext.gameResources.loadSector({ x: 0, y: 0 })
   }
 
   useEffect(() => {
-    load()
+    load().then(() => {
+      loopIdRef.current = uniqid()
+      gameLoop(loopIdRef.current)
+    })
   }, [])
 
   useEffect(() => {
@@ -74,11 +101,6 @@ const Game = () => {
     return () => {
       userInteractions.removeEventListener("interact", handleInteraction)
     }
-  }, [])
-
-  useEffect(() => {
-    loopIdRef.current = uniqid()
-    gameLoop(loopIdRef.current)
   }, [])
 
   const gameLoop = async (loopId: string) => {

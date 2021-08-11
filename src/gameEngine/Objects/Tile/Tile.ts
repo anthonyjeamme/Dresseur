@@ -10,8 +10,13 @@ export class Tile {
   walkable: boolean
 
   message: "Super"
+  type: string
+  physics: any
 
-  constructor({ id, animation, frames, over, walkable }, tileset: TileSet) {
+  constructor(
+    { id, animation, frames, over, walkable, type, physics },
+    tileset: TileSet
+  ) {
     this.#id = id
     this.walkable = walkable || false
     this.#animation = animation
@@ -19,6 +24,8 @@ export class Tile {
     this.#frames = frames.map(frame => ({
       coords: new TileCoords(frame.coords),
     }))
+    this.physics = physics
+    this.type = type
     this.#tileset = tileset
   }
 
