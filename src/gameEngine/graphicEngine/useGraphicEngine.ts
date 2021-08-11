@@ -32,11 +32,14 @@ export const useGraphicEngine = (): TGraphicEngine => {
       for (const sectorId of sectors) {
         const sector = gameResources.getSector(sectorId)
 
+        // console.log(sectorId)
+
         if (sector) {
           ctx.translate(
             sector.globalPosition.x * 32 * 32,
             sector.globalPosition.y * 32 * 32
           )
+          // console.log(sector.globalPosition.x * 32 * 32)
 
           renderTileMap(ctx, sector.map.tileMap)
 

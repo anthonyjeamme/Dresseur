@@ -43,6 +43,7 @@ const Game = () => {
   const load = async () => {
     await gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
     await gameResources.loadSector({ x: 0, y: 0 })
+    await gameResources.loadSector({ x: 10, y: 10 })
   }
 
   useEffect(() => {
@@ -52,10 +53,19 @@ const Game = () => {
   useEffect(() => {
     const handleInteraction = () => {
       changeZone(async () => {
-        gameContext.setPlayerPositionTo("", {
-          x: Math.round(Math.random() * 32 * 32),
-          y: Math.round(Math.random() * 32 * 32),
-        })
+        await gameResources.loadMap("aaaaaa")
+
+        if (gameContext.playerState.get().location.position.x > 32 * 32 * 5) {
+          gameContext.setPlayerPositionTo("aaaaaa", {
+            x: 32,
+            y: 32,
+          })
+        } else {
+          gameContext.setPlayerPositionTo("aaaaaa", {
+            x: 10 * 32 * 32 + 64,
+            y: 10 * 32 * 32 + 64,
+          })
+        }
       })
     }
 
