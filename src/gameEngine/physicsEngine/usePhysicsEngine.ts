@@ -15,16 +15,16 @@ export const usePhysicsEngine = (
     if (gameContext.playerState.get().movementDisabled) return
 
     if (userInteractions.isActive("down")) {
-      gameContext.playerState.get().location.position.y -= dt * 100
-    }
-    if (userInteractions.isActive("up")) {
       gameContext.playerState.get().location.position.y += dt * 100
     }
+    if (userInteractions.isActive("up")) {
+      gameContext.playerState.get().location.position.y -= dt * 100
+    }
     if (userInteractions.isActive("left")) {
-      gameContext.playerState.get().location.position.x += dt * 100
+      gameContext.playerState.get().location.position.x -= dt * 100
     }
     if (userInteractions.isActive("right")) {
-      gameContext.playerState.get().location.position.x -= dt * 100
+      gameContext.playerState.get().location.position.x += dt * 100
     }
   }
 

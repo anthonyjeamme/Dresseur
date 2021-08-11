@@ -27,7 +27,7 @@ export const useGraphicEngine = (): TGraphicEngine => {
       const x = Math.round(gameContext.playerState.get().location.position.x)
       const y = Math.round(gameContext.playerState.get().location.position.y)
 
-      ctx.translate(x, y)
+      ctx.translate(-x, -y)
 
       for (const sectorId of sectors) {
         const sector = gameResources.getSector(sectorId)
@@ -47,7 +47,7 @@ export const useGraphicEngine = (): TGraphicEngine => {
         }
       }
 
-      ctx.translate(-x, -y)
+      ctx.translate(x, y)
 
       ctx.fillStyle = "red"
 

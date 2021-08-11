@@ -9,12 +9,11 @@ import useIsMounted from "../../utils/useIsMounted"
 import GameRenderer from "./GameRenderer/GameRenderer"
 
 import { GameContextProvider, useGameContext } from "./GameContext/GameContext"
-import { timeout } from "../utils/time"
 
 import { useUserInteractions } from "../../gameEngine/io/useUserInteractions"
 
-import "./Game.scss"
 import { useResourceLoader } from "../../gameEngine/loader/loader"
+import "./Game.scss"
 
 const Game = () => {
   const loopIdRef = useRef(null)
@@ -32,9 +31,9 @@ const Game = () => {
   const changeZone = async change => {
     try {
       gameContext.playerState.get().movementDisabled = true
-      await gameContext.overlayEffect.play("close", 400)
+      await gameContext.overlayEffect.play("fadein", 200)
       await change()
-      await gameContext.overlayEffect.play("open", 400)
+      await gameContext.overlayEffect.play("fadeout", 200)
       gameContext.playerState.get().movementDisabled = false
     } catch (err) {
       console.log(err)
@@ -54,12 +53,10 @@ const Game = () => {
     const handleInteraction = () => {
       changeZone(async () => {
         gameContext.setPlayerPositionTo("", {
-          x: 0,
-          y: 0,
+          x: Math.round(Math.random() * 32 * 32),
+          y: Math.round(Math.random() * 32 * 32),
         })
       })
-
-      // transferEffect(timeout(1000))
     }
 
     userInteractions.addEventListener("interact", handleInteraction)
@@ -82,10 +79,6 @@ const Game = () => {
 
     graphicEngine.render(gameResources)
     physicsEngine.executeLoop()
-
-    if (userInteractions.isActive("up")) {
-      console.log("UP")
-    }
 
     window.requestAnimationFrame(() => {
       gameLoop(loopId)
