@@ -9,11 +9,11 @@ export const useCanvasAutoResize = (
     for (const canvasRef of canvasList) {
       canvasRef.current.height = Math.floor(
         canvasRef.current.clientHeight /
-          (graphicEngine.params.pixel_size * window.devicePixelRatio)
+          (graphicEngine.params.pixel_size / window.devicePixelRatio)
       )
       canvasRef.current.width = Math.floor(
         canvasRef.current.clientWidth /
-          (graphicEngine.params.pixel_size * window.devicePixelRatio)
+          (graphicEngine.params.pixel_size / window.devicePixelRatio)
       )
     }
   }
