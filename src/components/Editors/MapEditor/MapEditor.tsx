@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 
-import Topbar from "./Topbar/Topbar"
+import { navigate } from "gatsby"
 
 import uniqid from "uniqid"
 
@@ -18,25 +18,38 @@ import {
 } from "../../../gameEngine/graphicEngine/graphicEngine"
 import { TileSet } from "../../../gameEngine/Objects/TileSet/TileSet"
 import { Tile } from "../../../gameEngine/Objects/Tile/Tile"
+import { getUrlParams, isBrowser } from "../../utils/navigator"
+import EditorMenuBar from "../Common/EditorMenuBar/EditorMenuBar"
+import {
+  NotificationProvider,
+  useNotificationContext,
+} from "../Common/Notifications/Notifications"
+import TilsetPickerModal from "./TilsetPickerModal/TilsetPickerModal"
+import { useModal } from "../../Common/Modal/Modal"
+import useRefresh from "../../../utils/useRefresh"
 
-const MapEditor = ({}) => {
+const MapEditor = ({ mapId }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const positionRef = useRef<TPosition>({ x: 0, y: 0 })
   const isMounted = useIsMounted()
+  const [refresh] = useRefresh()
 
   const gameResources = useResourceLoader()
   const [loaded, setLoaded] = useState(false)
+  const currentSectorRef = useRef(null)
 
   const [sideBarOpened, setSideBarOpened] = useState(true)
+
+  const tilesetPickerModal = useModal()
 
   const updatePosition = (position: TPosition) => {
     positionRef.current = { ...position }
   }
 
   useEffect(() => {
-    setInterval(() => {
-      checkSectorsToLoad()
-    }, 1000)
+    // setInterval(() => {
+    //   checkSectorsToLoad()
+    // }, 1000)
   }, [])
 
   const checkSectorsToLoad = async () => {
@@ -91,9 +104,9 @@ const MapEditor = ({}) => {
   }, [])
 
   const load = async () => {
-    await gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
-
+    await gameResources.loadMap(mapId)
     await gameResources.loadSector({ x: 0, y: 0 })
+    currentSectorRef.current = gameResources.getSectorFromCoords({ x: 0, y: 0 })
   }
 
   useEffect(() => {
@@ -109,7 +122,7 @@ const MapEditor = ({}) => {
       })
   }, [])
 
-  const currentTileRef = useRef({ tileSet: null, tile: null })
+  const currentTileRef = useRef(null)
 
   const currentMouseOver = useRef(null)
 
@@ -159,7 +172,7 @@ const MapEditor = ({}) => {
       }
     }
 
-    if (currentMouseOver.current && currentTileRef.current.tile) {
+    if (currentMouseOver.current && currentTileRef.current) {
       ctx.fillStyle = "rgba(255,0,0,0.1)"
 
       ctx.globalAlpha = 0.7
@@ -259,14 +272,19 @@ const MapEditor = ({}) => {
       return
     }
 
-    if (!currentTileRef.current.tile) return
+    if (!currentTileRef.current) return
 
     const { tileSet, tile } = currentTileRef.current
 
     const x = position.x - sector.globalPosition.x * 32
     const y = position.y - sector.globalPosition.y * 32
 
-    if (gameResources.getTile(tileSet, tile).type === "over") {
+    if (tileSet === null) {
+      console.log("ICI")
+
+      sector.map.tileMap[y].cells[x].base = { tileSet: null, tile: null }
+      sector.map.tileMap[y].cells[x].over = []
+    } else if (gameResources.getTile(tileSet, tile).type === "over") {
       const list = sector.map.tileMap[y].cells[x].over.map(over =>
         over.getPath()
       )
@@ -290,6 +308,7 @@ const MapEditor = ({}) => {
     canvasRef.current.addEventListener("click", handleClick)
 
     return () => {
+      if (!canvasRef.current) return null
       canvasRef.current.removeEventListener("mousedown", handleMouseDown)
       canvasRef.current.removeEventListener("mouseup", handleMouseUp)
       canvasRef.current.removeEventListener("mousemove", handleMouseMove)
@@ -297,23 +316,44 @@ const MapEditor = ({}) => {
     }
   }, [])
 
+  const notifications = useNotificationContext()
+
   return (
     <div className="MapEditor">
-      <Topbar
-        handleSave={async () => {
-          for (const sectorId of gameResources.getSectorIds()) {
-            const d = gameResources.getSector(sectorId).toJSON()
+      <EditorMenuBar
+        menu={[
+          {
+            name: "Fichier",
+            menu: [
+              {
+                name: "Sauvegarder",
+                onClick: async () => {
+                  for (const sectorId of gameResources.getSectorIds()) {
+                    const d = gameResources.getSector(sectorId).toJSON()
 
-            console.log(d)
+                    await firebase
+                      .firestore()
+                      .collection("sectors")
+                      .doc(sectorId)
+                      .set(d)
 
-            await firebase
-              .firestore()
-              .collection("sectors")
-              .doc(sectorId)
-              .set(d)
-          }
-          console.log("SAVED")
-        }}
+                    console.log(d, "saved")
+                  }
+
+                  notifications.push({
+                    message: "Sauvegardé",
+                  })
+                },
+              },
+              {
+                name: "Retour",
+                onClick: () => {
+                  navigate("/editor/maps")
+                },
+              },
+            ],
+          },
+        ]}
       />
 
       <div className="content">
@@ -321,6 +361,37 @@ const MapEditor = ({}) => {
 
         {loaded && (
           <div className={`Sidebar ${sideBarOpened ? "active" : ""}`}>
+            <header>
+              <TilsetPickerModal
+                existingTilesetDependencies={[]}
+                handleSelect={async tilesetId => {
+                  gameResources
+                    .getSectorFromCoords({ x: 0, y: 0 })
+                    .dependencies.tileSets.push(tilesetId)
+
+                  await gameResources.reloadSectorDependencies({ x: 0, y: 0 })
+                  refresh()
+                }}
+                {...tilesetPickerModal}
+              />
+
+              <button
+                onClick={() => {
+                  tilesetPickerModal.open()
+                }}
+              >
+                Ajouter une dépendance
+              </button>
+            </header>
+
+            <button
+              onClick={() => {
+                currentTileRef.current = { tileSet: null, tile: null }
+              }}
+            >
+              Vide
+            </button>
+
             {Object.values(gameResources.getResources().tileSets).map(
               // @ts-ignore
               (tileSet: TileSet) => (
@@ -373,7 +444,17 @@ const MapEditor = ({}) => {
   )
 }
 
-export default MapEditor
+const MapEditorContainer = () => {
+  if (!isBrowser()) return null
+
+  return (
+    <NotificationProvider>
+      <MapEditor mapId={getUrlParams().id} />
+    </NotificationProvider>
+  )
+}
+
+export default MapEditorContainer
 
 const DisplayTile = ({
   tile,

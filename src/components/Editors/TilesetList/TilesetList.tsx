@@ -21,6 +21,10 @@ const TilesetList = ({}) => {
     <div className="TilesetList">
       <TilesetCreationModal {...creationModal} />
 
+      <header>
+        <Link to="/editor">Retour</Link>
+      </header>
+
       <h1>Tilesets</h1>
       <div className="list">
         <div

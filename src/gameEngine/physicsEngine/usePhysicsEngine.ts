@@ -48,6 +48,8 @@ export const usePhysicsEngine = (
         y: Math.floor(Math.round(nextPosition.y) / 32),
       }
 
+      const mapId = gameContext.gameResources.getCurrentMapId()
+
       const sector = gameContext.gameResources.getSectorFromCoords({
         x: 0,
         y: 0,
@@ -57,10 +59,38 @@ export const usePhysicsEngine = (
         sector.map.tileMap[tileCoord.y].cells[tileCoord.x].base?.physics?.walk
 
       if (walkable) {
-        if (tileCoord.x === 17 && tileCoord.y === 17) {
-          trigger(null)
+        if (
+          mapId === "05DGp5hRkJZvaMp4MCoT" &&
+          tileCoord.x === 17 &&
+          tileCoord.y === 17
+        ) {
+          trigger({
+            type: "CHANGE_MAP",
+            target: {
+              map: "3wuCf8wneH4ZfDmtXVWN",
+              position: {
+                x: 32 + 16,
+                y: 32 * 5 - 8,
+              },
+            },
+          })
 
           return
+        } else if (mapId === "3wuCf8wneH4ZfDmtXVWN") {
+          if (tileCoord.x === 1 && tileCoord.y === 5) {
+            trigger({
+              type: "CHANGE_MAP",
+              target: {
+                map: "05DGp5hRkJZvaMp4MCoT",
+                position: {
+                  x: 17 * 32 + 16,
+                  y: 18 * 32 + 8,
+                },
+              },
+            })
+
+            return
+          }
         }
 
         gameContext.playerState.get().location.position = nextPosition

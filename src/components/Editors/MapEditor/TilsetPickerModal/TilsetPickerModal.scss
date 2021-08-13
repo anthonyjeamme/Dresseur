@@ -1,0 +1,13 @@
+.TilsetPickerModal {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+
+    .tileset-item {
+      background-color: #eeeeee;
+      cursor: pointer;
+      padding: 10px 20px;
+    }
+  }
+}

@@ -5,7 +5,7 @@ const index = () => {
   return (
     <div style={{ maxWidth: 1000, margin: "30px auto" }}>
       <div>
-        <Link to="/editor/map">Editeur de map</Link>
+        <Link to="/editor/maps">Editeur de map</Link>
       </div>
 
       <div>

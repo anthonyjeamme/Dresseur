@@ -17,7 +17,9 @@ export const render = (
 
   try {
     renderTiles(scene, ctx)
-  } catch {}
+  } catch (err) {
+    console.log(err)
+  }
 
   ctx.translate(position.x, position.y)
   ctx.translate(-window.innerWidth / 8, -window.innerHeight / 8)
@@ -119,6 +121,8 @@ export const renderTile = (
   position: TPosition,
   size = { h: 32, w: 32 }
 ) => {
+  if (!tile?.getAnimationProps) return
+
   const frame =
     Math.round(new Date().getTime() / tile.getAnimationProps().frameDuration) %
     tile.getFramesLength()

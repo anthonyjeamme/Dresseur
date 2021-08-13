@@ -31,7 +31,7 @@ export const useResourceLoader = (): TResourceLoaderContext => {
     sectorsRef.current[id] = undefined
   }
 
-  const loadSector = async (position: TPosition) => {
+  const loadSector = async (position: TPosition, force: boolean = false) => {
     if (!mapRef.current) return
 
     const findSector = mapRef.current.sectors.find(sector =>
@@ -45,7 +45,7 @@ export const useResourceLoader = (): TResourceLoaderContext => {
 
     const { id } = findSector
 
-    if (sectorsRef.current[id]) {
+    if (sectorsRef.current[id] && !force) {
       console.log(`[LOADER] Sector ${id} already loaded`)
       return
     }
@@ -125,6 +125,24 @@ export const useResourceLoader = (): TResourceLoaderContext => {
     return playerImageRef.current
   }
 
+  const reloadSectorDependencies = async (position: TPosition) => {
+    // const sector = getSectorFromCoords(position)
+    // if (!sector) {
+    //   return
+    // }
+    // const { tileSets } = await loadSectorDependencies(
+    //   sector,
+    //   resourcesRef.current
+    // )
+    // resourcesRef.current = {
+    //   ...resourcesRef.current,
+    //   tileSets: {
+    //     ...resourcesRef.current,
+    //     ...tileSets,
+    //   },
+    // }
+  }
+
   return {
     getPlayerImage,
     loadPlayerImage,
@@ -132,6 +150,7 @@ export const useResourceLoader = (): TResourceLoaderContext => {
     getSectorIds,
     getCurrentMapId,
     getTile,
+    reloadSectorDependencies,
     freeSector,
     loadSector,
     getSector,
@@ -152,6 +171,7 @@ export type TResourceLoaderContext = {
   getSector: any
   getResources: any
   getSectorFromCoords: any
+  reloadSectorDependencies: any
 }
 
 export const _loadSector = async (id: string, resources): Promise<any> => {
@@ -163,6 +183,7 @@ export const _loadSector = async (id: string, resources): Promise<any> => {
 
   const dependencies = await loadSectorDependencies(sector, resources)
 
+  console.log(sector.map.tileMap)
   console.log(
     `[LOADER] Sector [${id}] loaded in ${
       new Date().getTime() - beforeDateTime
@@ -182,7 +203,9 @@ export const _loadSector = async (id: string, resources): Promise<any> => {
         tileMap: sector.map.tileMap.map(line => ({
           cells: line.cells.map(({ tile, tileSet, base, over }) => {
             return {
-              base: dependencies.tileSets[base.tileSet].getTile(base.tile),
+              base:
+                dependencies.tileSets[base?.tileSet]?.getTile(base.tile) ||
+                null,
               over: over.map(({ tileSet, tile }) =>
                 dependencies.tileSets[tileSet].getTile(tile)
               ),

@@ -35,6 +35,7 @@
       left: 0;
       min-width: 100%;
       background-color: white;
+      z-index: 100;
 
       &:not(.active) {
         display: none;

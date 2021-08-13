@@ -22,12 +22,12 @@ export class Sector {
         ...this.map,
         objects: this.map.objects.map(object => ({
           ...object,
-          tile: object.tile.getPath(),
+          tile: object.tile?.getPath?.() || null,
         })),
         tileMap: this.map.tileMap.map(line => ({
           ...line,
           cells: line.cells.map(cell => ({
-            base: cell.base.getPath(),
+            base: cell.base?.getPath?.() || null,
             over: cell.over.map(o => o.getPath()),
           })),
         })),

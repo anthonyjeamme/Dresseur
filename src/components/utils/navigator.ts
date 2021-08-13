@@ -18,3 +18,5 @@ export const getUrlParams = () => {
       {}
     )
 }
+
+export const isBrowser = () => typeof window !== "undefined"

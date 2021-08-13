@@ -7,12 +7,15 @@ import {
 } from "./graphicEngine.utils"
 
 import { useOverlayRender } from "./overlayRender/useOverlayRender"
+import { useShadowRender } from "./shadowRender/useShadowRender"
 import { useRendererReferences } from "./utils/useRenderedReferences"
 
 export const useGraphicEngine = (): TGraphicEngine => {
   const gameContext = useGameContext()
   const renderers = useRendererReferences()
   const overlayRender = useOverlayRender(renderers)
+
+  const shadowRender = useShadowRender(renderers)
 
   const render = () => {
     if (!canDraw()) return
@@ -43,6 +46,8 @@ export const useGraphicEngine = (): TGraphicEngine => {
 
           renderTileMap(ctx, sector.map.tileMap)
 
+          shadowRender.render()
+
           ctx.translate(
             -sector.globalPosition.x * 32 * 32,
             -sector.globalPosition.y * 32 * 32
@@ -67,14 +72,17 @@ export const useGraphicEngine = (): TGraphicEngine => {
 
       const frame = Math.round(new Date().getTime() / 60) % 6
 
+      ctx.scale(1, 0.5)
+
+      ctx.fillStyle = "rgba(0,0,0,0.2)"
+      ctx.beginPath()
+      ctx.arc(0, 0, 10, 0, 2 * Math.PI)
+      ctx.fill()
+      ctx.scale(1, 2)
+
       ctx.drawImage(
         gameContext.gameResources.getPlayerImage(),
-
         walking ? 30 * frame : 0,
-
-        //   (keyboard.isActive("ACTION_GO_DOWN") ? 60 : 0) + 60 * frame,
-        // lastDirection.current
-
         iDirection * 60,
         30,
         60,

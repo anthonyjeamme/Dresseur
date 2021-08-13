@@ -14,6 +14,7 @@ import { useUserInteractions } from "../../gameEngine/io/useUserInteractions"
 
 import "./Game.scss"
 import MobileButtons from "../Common/MobileButtons/MobileButtons"
+import { findSectorCoordsFromPosition } from "../utils/map"
 
 const Game = () => {
   const loopIdRef = useRef(null)
@@ -26,25 +27,14 @@ const Game = () => {
 
   const isMounted = useIsMounted()
 
-  function handleTrigger() {
+  function handleTrigger(event) {
     changeZone(async () => {
-      console.log(gameContext.gameResources.getCurrentMapId())
-      if (
-        gameContext.gameResources.getCurrentMapId() === "05DGp5hRkJZvaMp4MCoT"
-      ) {
-        await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoU")
-        await gameContext.gameResources.loadSector({ x: 0, y: 0 })
-        gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
-          x: 32,
-          y: 32,
-        })
-      } else {
-        // await gameContext.gameResources.loadMap("05DGp5hRkJZvaMp4MCoT")
-        // await gameContext.gameResources.loadSector({ x: 0, y: 0 })
-        // gameContext.setPlayerPositionTo("05DGp5hRkJZvaMp4MCoU", {
-        //   x: 32,
-        //   y: 32,
-        // })
+      if (event.type === "CHANGE_MAP") {
+        await gameContext.gameResources.loadMap(event.target.map)
+        await gameContext.gameResources.loadSector(
+          findSectorCoordsFromPosition(event.target.position)
+        )
+        gameContext.setPlayerPositionTo(event.target.map, event.target.position)
       }
     })
   }
@@ -52,9 +42,9 @@ const Game = () => {
   const changeZone = async change => {
     try {
       gameContext.playerState.get().movementDisabled = true
-      await gameContext.overlayEffect.play("fadein", 200)
+      await gameContext.overlayEffect.play("fadein", 150)
       await change()
-      await gameContext.overlayEffect.play("fadeout", 200)
+      await gameContext.overlayEffect.play("fadeout", 150)
       gameContext.playerState.get().movementDisabled = false
     } catch (err) {
       console.log(err)

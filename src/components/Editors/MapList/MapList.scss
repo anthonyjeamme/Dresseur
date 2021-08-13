@@ -1,0 +1,26 @@
+.MapList {
+  padding-top: 80px;
+
+  & > .Container {
+    & > header {
+      padding: 40px 20px;
+    }
+  }
+
+  .game-item {
+    text-decoration: none;
+    cursor: pointer;
+
+    display: block;
+    padding: 20px;
+    background-color: #eeeeee;
+    color: black;
+    &:not(:nth-last-child(1)) {
+      margin-bottom: 20px;
+    }
+    transition: background-color 200ms;
+    &:hover {
+      background-color: #dddddd;
+    }
+  }
+}

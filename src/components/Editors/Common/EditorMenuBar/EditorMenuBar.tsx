@@ -9,6 +9,7 @@ const EditorMenuBar = ({ menu = [] }: { menu: TEditorMenu[] }) => {
     <div className="EditorMenuBar">
       {menu.map(item => (
         <EditorMenuItem
+          key={item.name}
           name={item.name}
           onClick={item.onClick}
           menu={item.menu}
@@ -43,6 +44,7 @@ const EditorMenuItem = ({ name, onClick = null, menu = null }) => {
         <div className={`menu ${isOpen ? "active" : ""}`}>
           {menu.map(item => (
             <div
+              key={item.name}
               role="button"
               className="item"
               onClick={() => {
