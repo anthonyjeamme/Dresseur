@@ -1,0 +1,52 @@
+.Triggers{
+    padding: 10px;
+
+    button{
+        background-color:#f4f1fa;
+        transition: background-color 200ms;
+        &:hover{
+            background-color: darken(#f4f1fa, 2%);
+        }
+    }
+
+    &>.add-button{
+        padding: 0;
+        border:0;
+        width:100%;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        transition: background-color 200ms;
+
+    }
+
+    &>.list{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &>.TriggerItem{
+            padding: 10px;
+            border: 1px solid rgba(#173F5F, 0.1);
+            border-radius: 4px;
+
+            &>header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+               &>.buttons{
+                   display: flex;
+                   gap: 4px;
+
+                    &>button{
+                        border:0;
+                        height:36px;
+                        width:36px;
+                        padding: 0;
+                        border-radius: 4px;
+                    }
+               }
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+.ExpandableSection{
+
+    padding: 0 4px;
+    margin-bottom: 5px;
+    
+    &>header{
+        cursor: pointer;
+        display: flex;
+        padding: 5px 10px;
+    
+        align-items: center;
+
+        transition: background-color 200ms;
+        border-radius: 4px;
+        font-weight: 600;
+
+        &:hover, &.active{
+            background-color: #f4f1fa;
+        }
+
+        &>span{
+            flex: 1;
+        }
+
+        
+        &>.caret{
+            transition: transform 300ms;
+            font-size: 18px;
+        }
+
+        &.active{
+            &>.caret{
+                transform: rotate(180deg);
+            }
+        }
+
+    }
+
+
+    &>.content{}
+
+
+}

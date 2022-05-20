@@ -25,7 +25,7 @@ const getDayColor = () => {
     new Date().getTime() / 1000 / 60 / 60 -
     Math.floor(new Date().getTime() / 1000 / 60 / 60)
 
-  const ambianceColor = getColorFromGradient(gradient, position)
+  const ambianceColor = getColorFromGradient(gradient, 0.9)
 
   return `rgba(${ambianceColor.join(",")})`
 }

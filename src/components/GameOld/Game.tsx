@@ -339,6 +339,9 @@ const Game = () => {
       shadowCanvasRef.current.height
     )
 
+    shadowCtx.fillStyle = "#ff0000"
+    shadowCtx.fillRect(0, 0, 40, 40)
+
     function easeInOut(t) {
       return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
     }

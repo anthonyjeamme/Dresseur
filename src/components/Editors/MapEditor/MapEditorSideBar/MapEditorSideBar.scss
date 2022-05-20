@@ -1,3 +1,50 @@
-.MapEditorSideBar {
+.MapEditorSidebar{
 
+    font-size: 14px;
+    font-weight: 500;
+
+    border-left:2px solid rgba(23, 63, 95, 0.1);
+    
+    display: flex;
+    flex-direction: column;
+
+    &>header{
+        padding: 10px 10px 0 10px;
+        background-color: #f4f1fa;
+    }
+
+    &>.content{
+        flex:1;
+        padding: 4px 0;
+        overflow-y: auto;
+    }
+
+    &>footer{
+        padding-bottom: 10px;
+        padding-top: 10px;
+        border-top: 2px solid rgba(23, 63, 95, 0.1);
+
+        .LayerSelector{
+            display:flex;
+            flex-direction: column;
+            padding: 0 10px;
+
+            &>.LayerItem{
+                border:0;
+                padding: 4px 0;
+                border-radius: 4px;
+                background-color: transparent;
+                transition: background-color 200ms, color 200ms;
+
+                &.active{
+                    background-color: #173F5F;
+                    color: white;
+                }
+
+                &:not(:nth-last-child(1)){
+                    margin-bottom: 4px;;
+                }
+            }
+        }
+    }
 }

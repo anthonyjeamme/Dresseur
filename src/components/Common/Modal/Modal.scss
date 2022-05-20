@@ -19,7 +19,7 @@
 
   & > .overlay {
     position: fixed;
-    background-color: rgba(black, 0.7);
+    background-color: rgba(#173f5f, 0.95);
     top: 0;
     left: 0;
     bottom: 0;
@@ -28,30 +28,27 @@
 
   & > .close-button {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    height: 50px;
-    width: 50px;
+    top: 30px;
+    right: 30px;
+    height: 40px;
+    width: 40px;
+    border-radius: 40px;
     border: 0;
-    background-color: #eeeeee;
+    background-color: #ffffff;
     z-index: 10;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-
-    & > img {
-      height: 15px;
-      width: 15px;
-      margin: 0;
-    }
+    font-size: 20px;
   }
 
   & > .content {
     background-color: #ffffff;
     margin: auto;
     z-index: 10;
-    padding: 60px;
+    padding: 20px;
+    border-radius: 10px;
   }
 }

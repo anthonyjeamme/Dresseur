@@ -10,9 +10,8 @@ const Modal: React.FC<TModalHook & { className?: string }> = ({
 }) => {
   return (
     <div
-      className={`Modal ${isOpen ? "active" : ""}${
-        className ? ` ${className}` : ""
-      }`}
+      className={`Modal ${isOpen ? "active" : ""}${className ? ` ${className}` : ""
+        }`}
     >
       <div className="overlay" />
       <div className="content">{children}</div>
@@ -22,7 +21,7 @@ const Modal: React.FC<TModalHook & { className?: string }> = ({
           close()
         }}
       >
-        <img src="/editor/ui/close_px.png" />
+        <i className="mdi mdi-close" />
       </button>
     </div>
   )
@@ -60,5 +59,7 @@ export type TModalHook<T = any> = {
   isOpen: boolean
   payload?: T
 }
+
+export type TModal<T = any> = TModalHook<T>
 
 export default Modal

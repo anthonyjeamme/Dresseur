@@ -1,61 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap");
+
 .MapEditor {
-  font-family: "Press Start 2P", cursive;
-  font-size: 10px;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+    * {
+        font-family: "Montserrat", sans-serif;
+    }
 
-  display: flex;
-  flex-direction: column;
+    color: #173f5f;
 
-  & > .content {
-    flex: 1;
+    height: 100vh;
     display: flex;
-    position: relative;
 
-    & > canvas {
-      flex: 1;
-      background-color: black;
+    & > .MapEditorRenderer {
+        flex: 1;
     }
 
-    & > .Sidebar {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 350px;
-      background-color: #eee;
-      transform: translateX(350px);
-      transition: transform 400ms;
-      overflow-y: auto;
-
-      &.active {
-        transform: none;
-      }
-
-      border-left: 2px solid #bbb;
-      padding: 20px;
-      box-sizing: border-box;
+    & > .MapEditorSidebar {
+        width: 300px;
     }
-  }
 
-  .tileset {
-    overflow-y: auto;
-    & > .tiles {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-
-      .tile {
-        display: flex;
-        cursor: pointer;
-        height: 64px;
-        width: 64px;
-        background-color: red;
-      }
+    input,
+    select {
+        border: 2px solid rgba(#173f5f, 0.1);
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 15px;
     }
-  }
-  .DisplayTile {
-    font-size: 8px;
-    cursor: pointer;
-  }
+
+    button {
+        background-color: #f4f1fa;
+        border: 0;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 15px;
+    }
 }
